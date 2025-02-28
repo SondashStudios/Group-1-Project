@@ -6,5 +6,5 @@ class SignUpForm(UserCreationForm):
     email = forms.EmailField(required=True)
 
     class Meta:
-        model = CustomUser  # Ensure this matches the model in models.py
+        model = CustomUser 
         fields = ['username', 'email', 'phone_number', 'graduation_year', 'password1', 'password2']

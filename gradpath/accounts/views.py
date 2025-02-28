@@ -10,7 +10,7 @@ def signup_view(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('home')  # Ensure 'home' exists in your `urls.py`
+            return redirect('home')  
     else:
         form = SignUpForm()
     return render(request, 'accounts/signup.html', {'form': form})
@@ -22,14 +22,14 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         if user:
             login(request, user)
-            return redirect('welcome')  # Redirect to the welcome page
+            return redirect('welcome')  
         else:
             messages.error(request, 'Invalid username or password.')
     return render(request, 'accounts/login.html')
 
 def logout_view(request):
     logout(request)
-    return redirect('login')  # Ensure 'login' exists in `urls.py`
+    return redirect('login')  
 
 def home_view(request):
     return render(request, 'home.html') 
