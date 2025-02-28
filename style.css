@@ -1,0 +1,96 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    padding: 0;
+    background-color: #f8f8f8;
+}
+
+h2, h3 {
+    text-align: center;
+}
+
+form {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+input {
+    width: 80%;
+    padding: 10px;
+    margin-right: 10px;
+}
+
+button {
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+#questionsContainer {
+    width: 80%;
+    margin: 0 auto;
+    background: white;
+    padding: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+textarea {
+    width: 80%;  /* Adjust width as needed */
+    height: 100px;  /* Increase height */
+    padding: 10px;
+    font-size: 16px;  /* Make text easier to read */
+    resize: vertical; /* Allow manual resizing */
+}
+
+.reply {
+    border-left: 3px solid #007bff;
+    padding-left: 15px;
+    margin-bottom: 10px;
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+    width: 80%;
+}
+
+.reply-header {
+    font-weight: bold;
+    font-size: 14px;
+    color: #007bff;
+}
+
+.reply-time {
+    font-size: 12px;
+    color: gray;
+}
+
+.reply-content {
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+.reply-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+.nested-reply-box {
+    margin-left: 30px;
+    margin-top: 5px;
+}
+
+.nested-replies {
+    margin-left: 30px;
+}
+
+
