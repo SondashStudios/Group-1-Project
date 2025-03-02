@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import gettext_lazy as _
-from .models import CustomUser
+from .models import CustomUser, Resume
 
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
@@ -14,3 +14,9 @@ class CustomUserAdmin(UserAdmin):
             (name, {'fields': [(field for field in data['fields'] if field != 'password_based_authentication')]})
             for name, data in fieldsets
         ]
+# Register the Resume model
+@admin.register(Resume)
+class ResumeAdmin(admin.ModelAdmin):
+    list_display = ('user', 'title', 'created_at', 'updated_at')
+    search_fields = ('user__username', 'title')
+    list_filter = ('created_at', 'updated_at')
