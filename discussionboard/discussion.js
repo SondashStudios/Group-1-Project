@@ -52,7 +52,7 @@ function loadReplies() {
         .catch(error => console.error("Error fetching replies:", error));
 }
 
-// Function to create a reply element (No nesting)
+// Function to create a reply element (No reply buttons, completely flat)
 function createReplyElement(reply) {
     const replyDiv = document.createElement("div");
     replyDiv.classList.add("reply");
@@ -63,44 +63,24 @@ function createReplyElement(reply) {
             <small class="reply-time">(${reply.created_at})</small>
         </div>
         <p class="reply-content">${reply.reply}</p>
-        <button class="reply-btn" data-id="${reply.id}">Reply</button>
-        <div id="reply-box-${reply.id}" class="nested-reply-box"></div>
     `;
-
-    // Attach event listener to the reply button
-    replyDiv.querySelector(".reply-btn").addEventListener("click", function () {
-        showReplyBox(reply.id);
-    });
 
     return replyDiv;
 }
 
-// Function to show the reply input box
-function showReplyBox(parentId) {
-    const replyBox = document.getElementById(`reply-box-${parentId}`);
-    if (replyBox.innerHTML.trim() !== "") return;
-
-    replyBox.innerHTML = `
-        <textarea id="reply-input-${parentId}" class="nested-reply-text" placeholder="Write a reply..."></textarea>
-        <button class="submit-nested-reply" onclick="postReply(null, ${parentId})">Post Reply</button>
-        <button class="cancel-nested-reply" onclick="cancelReply(${parentId})">Cancel</button>
-    `;
-}
-
-// Function to post a reply (No nesting)
-function postReply(questionId = null, parentId = null) {
-    const replyInput = parentId
-        ? document.getElementById(`reply-input-${parentId}`)
-        : document.getElementById("replyText");
-
+// Function to post a reply (Only allows replies to the main question)
+function postReply(questionId) {
+    const replyInput = document.getElementById("replyText");
     const replyText = replyInput.value.trim();
+
     if (!replyText) {
         alert("Reply cannot be empty!");
         return;
     }
 
     const formData = new URLSearchParams();
-    formData.append("question_id", questionId || new URLSearchParams(window.location.search).get("id"));
+    formData.append("question_id", questionId);
+
     formData.append("reply", replyText);
 
     fetch("/post_reply.php", {
@@ -118,10 +98,4 @@ function postReply(questionId = null, parentId = null) {
         }
     })
     .catch(error => console.error("Error:", error));
-}
-
-// Function to cancel a reply
-function cancelReply(parentId) {
-    const replyBox = document.getElementById(`reply-box-${parentId}`);
-    if (replyBox) replyBox.innerHTML = "";
 }
