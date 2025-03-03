@@ -7,41 +7,56 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
+    // Fetch question title
     fetch(`/get_question.php?id=${questionId}`)
         .then(response => response.json())
         .then(data => {
-            document.getElementById("questionTitle").innerText = data.title;
-        });
+            if (data.error) {
+                document.getElementById("questionTitle").innerText = "Invalid Question ID";
+            } else {
+                document.getElementById("questionTitle").innerText = data.title;
+            }
+        })
+        .catch(error => console.error("Error fetching question:", error));
 
+    // Load replies
     loadReplies();
 
-    document.getElementById("postReplyBtn").addEventListener("click", function () {
+    document.getElementById("replyForm").addEventListener("submit", function (e) {
+        e.preventDefault();
         postReply(questionId);
     });
 });
 
-// Function to load replies
+// Function to load replies (Flat structure, No nesting)
 function loadReplies() {
     const urlParams = new URLSearchParams(window.location.search);
     const questionId = urlParams.get("id");
 
     fetch(`/get_replies.php?id=${questionId}`)
         .then(response => response.json())
-        .then(replies => {
+        .then(data => {
             const repliesContainer = document.getElementById("repliesContainer");
             repliesContainer.innerHTML = "";
-            replies.forEach(reply => {
-                const replyElement = createReplyElement(reply);
-                repliesContainer.appendChild(replyElement);
+
+            if (data.error) {
+                repliesContainer.innerHTML = `<p>No replies yet. Be the first to respond!</p>`;
+                return;
+            }
+
+            // Display all replies at the same level (no nesting)
+            data.forEach(reply => {
+                repliesContainer.appendChild(createReplyElement(reply));
             });
-        });
+        })
+        .catch(error => console.error("Error fetching replies:", error));
 }
 
-// Function to create a reply element with indentation
-function createReplyElement(reply, depth = 0) {
+// Function to create a reply element (No nesting)
+function createReplyElement(reply) {
     const replyDiv = document.createElement("div");
     replyDiv.classList.add("reply");
-    replyDiv.style.marginLeft = `${depth * 30}px`; // Indent replies
+
     replyDiv.innerHTML = `
         <div class="reply-header">
             <span class="reply-username">User</span> 
@@ -50,18 +65,9 @@ function createReplyElement(reply, depth = 0) {
         <p class="reply-content">${reply.reply}</p>
         <button class="reply-btn" data-id="${reply.id}">Reply</button>
         <div id="reply-box-${reply.id}" class="nested-reply-box"></div>
-        <div class="nested-replies"></div>
     `;
 
-    // Handle nested replies
-    if (reply.children && reply.children.length > 0) {
-        const nestedContainer = replyDiv.querySelector(".nested-replies");
-        reply.children.forEach(childReply => {
-            nestedContainer.appendChild(createReplyElement(childReply, depth + 1));
-        });
-    }
-
-    // Attach event listener for reply button
+    // Attach event listener to the reply button
     replyDiv.querySelector(".reply-btn").addEventListener("click", function () {
         showReplyBox(reply.id);
     });
@@ -81,7 +87,7 @@ function showReplyBox(parentId) {
     `;
 }
 
-// Function to post a reply (Handles both main & nested replies)
+// Function to post a reply (No nesting)
 function postReply(questionId = null, parentId = null) {
     const replyInput = parentId
         ? document.getElementById(`reply-input-${parentId}`)
@@ -96,9 +102,6 @@ function postReply(questionId = null, parentId = null) {
     const formData = new URLSearchParams();
     formData.append("question_id", questionId || new URLSearchParams(window.location.search).get("id"));
     formData.append("reply", replyText);
-    if (parentId) {
-        formData.append("parent_id", parentId);
-    }
 
     fetch("/post_reply.php", {
         method: "POST",
@@ -109,9 +112,6 @@ function postReply(questionId = null, parentId = null) {
     .then(data => {
         if (data.success) {
             replyInput.value = ""; 
-            if (parentId) {
-                document.getElementById(`reply-box-${parentId}`).innerHTML = "";
-            }
             loadReplies(); // Refresh replies dynamically
         } else {
             alert("Error: " + data.error);
@@ -120,7 +120,7 @@ function postReply(questionId = null, parentId = null) {
     .catch(error => console.error("Error:", error));
 }
 
-// Function to close the reply box on cancel
+// Function to cancel a reply
 function cancelReply(parentId) {
     const replyBox = document.getElementById(`reply-box-${parentId}`);
     if (replyBox) replyBox.innerHTML = "";
