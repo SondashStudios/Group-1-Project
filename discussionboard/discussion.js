@@ -52,7 +52,7 @@ function loadReplies() {
         .catch(error => console.error("Error fetching replies:", error));
 }
 
-// Function to create a reply element (No reply buttons, completely flat)
+// Function to create a reply element (Reply button is visible but does nothing for now)
 function createReplyElement(reply) {
     const replyDiv = document.createElement("div");
     replyDiv.classList.add("reply");
@@ -65,6 +65,19 @@ function createReplyElement(reply) {
         <p class="reply-content">${reply.reply}</p>
     `;
 
+    // Create and append the reply button (Does nothing for now)
+    const replyButton = document.createElement("button");
+    replyButton.classList.add("reply-btn");
+    replyButton.setAttribute("data-id", reply.id);
+    replyButton.textContent = "Reply";
+    
+    // Placeholder for future functionality
+    replyButton.addEventListener("click", function () {
+        console.log("Reply button clicked for reply ID:", reply.id);
+    });
+
+    replyDiv.appendChild(replyButton);
+    
     return replyDiv;
 }
 
@@ -80,7 +93,6 @@ function postReply(questionId) {
 
     const formData = new URLSearchParams();
     formData.append("question_id", questionId);
-
     formData.append("reply", replyText);
 
     fetch("/post_reply.php", {
