@@ -1,29 +1,30 @@
 document.addEventListener("DOMContentLoaded", () => {
     loadQuestions();
 
-    document.getElementById("questionForm").addEventListener("submit", function(e) {
+    document.getElementById("questionForm").addEventListener("submit", function (e) {
         e.preventDefault();
         postQuestion();
     });
 });
 
-// Fetch questions from database
+// Fetch and display questions
 function loadQuestions() {
     fetch("get_questions.php")
-    .then(response => response.json())
-    .then(data => {
-        const container = document.getElementById("questionsContainer");
-        container.innerHTML = "";
-        if (data.length === 0) {
-            container.innerHTML = "<p>No questions yet. Be the first to ask!</p>";
-        } else {
-            data.forEach(q => {
-                const div = document.createElement("div");
-                div.innerHTML = `<p><a href="discussion.html?id=${q.id}">${q.title}</a></p>`;
-                container.appendChild(div);
-            });
-        }
-    });
+        .then(response => response.json())
+        .then(data => {
+            const container = document.getElementById("questionsContainer");
+            container.innerHTML = "";
+            if (data.length === 0) {
+                container.innerHTML = "<p>No questions yet. Be the first to ask!</p>";
+            } else {
+                data.forEach(q => {
+                    const div = document.createElement("div");
+                    div.innerHTML = `<p><a href="discussion.html?id=${q.id}">${q.title}</a></p>`;
+                    container.appendChild(div);
+                });
+            }
+        })
+        .catch(error => console.error("Error loading questions:", error));
 }
 
 // Post a new question
