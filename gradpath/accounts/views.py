@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
-from .forms import SignUpForm
 from django.contrib.auth.decorators import login_required
+from .forms import SignUpForm 
+
+
 
 def signup_view(request):
     if request.method == 'POST':
@@ -10,7 +12,8 @@ def signup_view(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('home')  
+            return redirect('resume-create')  # Redirect to Resume Creation Page
+  
     else:
         form = SignUpForm()
     return render(request, 'accounts/signup.html', {'form': form})

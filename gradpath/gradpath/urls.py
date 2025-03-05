@@ -24,5 +24,6 @@ def home_redirect(request):
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls')),
+    path('api/v1/', include('resumes.urls')),  # to include Resume API
     path('', home_redirect, name='home'),  # This will handle `/`
-]
+] 

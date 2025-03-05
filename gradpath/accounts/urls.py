@@ -1,4 +1,5 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 from .views import home_view, signup_view, login_view, logout_view, welcome_view
 
 urlpatterns = [
