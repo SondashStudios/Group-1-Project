@@ -1,5 +1,8 @@
-import { jest } from '@jest/globals';
-import { postQuestion, loadQuestions } from '../discussionboard/main.js';
+/**
+ * @jest-environment jsdom (npx jest)
+ */
+const { postQuestion, loadQuestions } = require('../discussionboard/main.js');
+
 
 function flushPromises() {
   return new Promise(resolve => setTimeout(resolve, 0));

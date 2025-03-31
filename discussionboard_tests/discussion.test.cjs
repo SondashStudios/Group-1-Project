@@ -1,5 +1,8 @@
-import { jest } from '@jest/globals';
-import { postReply, loadReplies } from '../discussionboard/discussion.js';
+/**
+ * @jest-environment jsdom (npx jest)
+ */
+const { postReply, loadReplies } = require('../discussionboard/discussion.js');
+
 
 function flushPromises() {
   return new Promise(resolve => setTimeout(resolve, 0));

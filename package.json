@@ -1,13 +1,12 @@
 {
   "name": "discussionboard",
   "version": "1.0.0",
-  "type": "module",
   "main": "index.js",
   "directories": {
     "test": "tests"
   },
   "scripts": {
-    "test": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js"
+    "test": "jest" 
   },
   "repository": {
     "type": "git",

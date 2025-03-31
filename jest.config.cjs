@@ -1,5 +1,6 @@
 module.exports = {
-  testEnvironment: "jsdom",
-  transform: {},
-  testMatch: ["**/discussionboard_tests/**/*.test.mjs"], 
+  testMatch: [
+    "**/discussionboard_tests/**/*.test.cjs" 
+  ],
+  testEnvironment: "jsdom" 
 };
