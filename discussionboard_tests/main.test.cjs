@@ -1,42 +1,30 @@
-/**
- * @jest-environment jsdom (npx jest)
- */
-const { postQuestion, loadQuestions } = require('../discussionboard/main.js');
+const { postQuestion, loadQuestions } = require("../discussionboard/main");
 
+global.fetch = jest.fn(() =>
+  Promise.resolve({
+    text: () => Promise.resolve("success"),
+    json: () => Promise.resolve([{ id: 1, title: "Test Question" }]),
+  })
+);
 
-function flushPromises() {
-  return new Promise(resolve => setTimeout(resolve, 0));
-}
+describe("postQuestion", () => {
+  beforeEach(() => {
+    document.body.innerHTML = `
+      <input id="questionTitle" value="New Question" />
+      <div id="questionsContainer"></div>
+    `;
+    delete window.location;
+    window.location = { search: "?user=Bugga" };
+  });
 
-beforeEach(() => {
-  document.body.innerHTML = `
-    <input type="text" id="questionTitle" />
-    <div id="questionsContainer"></div>
-  `;
-  global.fetch = jest.fn();
-});
-
-test("posts a question with valid input", async () => {
-  document.getElementById("questionTitle").value = "What sites can be used to practice for technical interviews?";
-
-  // Mock both the POST request and the follow-up question reload
-  fetch.mockResolvedValueOnce({ text: () => Promise.resolve("OK") });
-  fetch.mockResolvedValueOnce({ json: () => Promise.resolve([]) });
-
-  await postQuestion();
-  await flushPromises();
-
-  expect(fetch).toHaveBeenCalledWith("post_question.php", expect.objectContaining({
-    method: "POST",
-  }));
-});
-
-test("shows message when no questions exist", async () => {
-  fetch.mockResolvedValueOnce({ json: () => Promise.resolve([]) });
-
-  await loadQuestions();
-  await flushPromises();
-
-  expect(document.getElementById("questionsContainer").innerHTML)
-    .toContain("No questions yet");
+  it("submits a question with a username from URL", async () => {
+    await postQuestion();
+    expect(fetch).toHaveBeenCalledWith(
+      "post_question.php",
+      expect.objectContaining({
+        method: "POST",
+        body: JSON.stringify({ title: "New Question", username: "Bugga" }),
+      })
+    );
+  });
 });

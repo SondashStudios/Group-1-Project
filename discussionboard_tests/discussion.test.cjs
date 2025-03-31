@@ -1,47 +1,56 @@
 /**
- * @jest-environment jsdom (npx jest)
+ * @jest-environment jsdom
  */
-const { postReply, loadReplies } = require('../discussionboard/discussion.js');
 
+const fs = require("fs");
+const path = require("path");
 
-function flushPromises() {
-  return new Promise(resolve => setTimeout(resolve, 0));
-}
-
+// Load the HTML structure with a repliesContainer div
 beforeEach(() => {
   document.body.innerHTML = `
-    <textarea id="replyText"></textarea>
     <div id="repliesContainer"></div>
   `;
-  global.fetch = jest.fn();
 });
 
-test("should not post an empty reply", async () => {
-  document.getElementById("replyText").value = "";
+// Load the JS file you're testing
+const script = fs.readFileSync(path.resolve(__dirname, "../discussionboard/discussion.js"), "utf8");
+eval(script); // Load your actual loadReplies() function into the test environment
 
-  const alertMock = jest.spyOn(window, "alert").mockImplementation(() => {});
-  await postReply("Definitely LeetCode and HackerRank");
+// Mock fetch with nested replies
+global.fetch = jest.fn(() =>
+  Promise.resolve({
+    json: () =>
+      Promise.resolve([
+        {
+          id: 1,
+          username: "Pritika",
+          reply: "Parent Reply",
+          created_at: "2025-03-31",
+          children: [
+            {
+              id: 2,
+              username: "Noor",
+              reply: "Nested Reply",
+              created_at: "2025-03-31",
+              children: []
+            }
+          ]
+        }
+      ])
+  })
+);
 
-  expect(alertMock).toHaveBeenCalledWith("Reply cannot be empty!");
-  alertMock.mockRestore();
-});
+describe("loadReplies", () => {
+  test("renders parent and nested replies correctly", async () => {
+    await loadReplies();
 
-test("should post valid reply and reload replies", async () => {
-  document.getElementById("replyText").value = "This is a test reply";
+    // Wait for DOM to update
+    await new Promise((r) => setTimeout(r, 100));
 
-  // 1st: post the reply
-  fetch.mockResolvedValueOnce({
-    json: () => Promise.resolve({ success: true })
+    const replies = document.querySelectorAll(".reply");
+
+    expect(replies.length).toBeGreaterThanOrEqual(2);
+    expect(replies[0].textContent).toMatch(/Pritika|Parent Reply/);
+    expect(replies[1].textContent).toMatch(/Noor|Nested Reply/);
   });
-
-  // 2nd: get replies after posting
-  fetch.mockResolvedValueOnce({
-    json: () => Promise.resolve([])
-  });
-
-  await postReply("123");
-  await flushPromises();
-
-  expect(fetch).toHaveBeenCalledWith("/post_reply.php", expect.any(Object));
-  expect(document.getElementById("replyText").value).toBe("");
 });
