@@ -7,7 +7,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-// Fetch and display questions
+function getLoggedInUserFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get("user") || "Anonymous";
+}
+
 function loadQuestions() {
     fetch("get_questions.php")
         .then(response => response.json())
@@ -19,7 +23,7 @@ function loadQuestions() {
             } else {
                 data.forEach(q => {
                     const div = document.createElement("div");
-                    div.innerHTML = `<p><a href="discussion.html?id=${q.id}">${q.title}</a></p>`;
+                    div.innerHTML = `<p><a href="discussion.html?id=${q.id}&user=${getLoggedInUserFromURL()}">${q.title}</a></p>`;
                     container.appendChild(div);
                 });
             }
@@ -27,18 +31,21 @@ function loadQuestions() {
         .catch(error => console.error("Error loading questions:", error));
 }
 
-// Post a new question
 function postQuestion() {
     const title = document.getElementById("questionTitle").value;
 
     fetch("post_question.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title: title })
+        body: JSON.stringify({ title: title, username: getLoggedInUserFromURL() })
     })
     .then(response => response.text())
     .then(() => {
         document.getElementById("questionTitle").value = "";
-        loadQuestions(); // Refresh list
+        loadQuestions();
     });
+}
+
+if (typeof module !== "undefined") {
+    module.exports = { postQuestion, loadQuestions };
 }
