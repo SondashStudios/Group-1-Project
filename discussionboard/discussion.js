@@ -7,13 +7,19 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
-    fetch(`get_question.php?id=${questionId}`)
+    // Fetch question title
+    fetch(`/get_question.php?id=${questionId}`)
         .then(response => response.json())
         .then(data => {
-            document.getElementById("questionTitle").innerText = data.error ? "Invalid Question ID" : data.title;
+            if (data.error) {
+                document.getElementById("questionTitle").innerText = "Invalid Question ID";
+            } else {
+                document.getElementById("questionTitle").innerText = data.title;
+            }
         })
         .catch(error => console.error("Error fetching question:", error));
 
+    // Load replies
     loadReplies();
 
     document.getElementById("replyForm").addEventListener("submit", function (e) {
@@ -22,113 +28,86 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-function getLoggedInUserFromURL() {
-    const params = new URLSearchParams(window.location.search);
-    return params.get("user") || "Anonymous";
-}
-
+// Function to load replies (Flat structure, No nesting)
 function loadReplies() {
-    const questionId = new URLSearchParams(window.location.search).get("id");
+    const urlParams = new URLSearchParams(window.location.search);
+    const questionId = urlParams.get("id");
 
-    fetch(`get_replies.php?id=${questionId}`)
+    fetch(`/get_replies.php?id=${questionId}`)
         .then(response => response.json())
         .then(data => {
-            const container = document.getElementById("repliesContainer");
-            container.innerHTML = data.length === 0
-                ? "<p>No replies yet. Be the first to respond!</p>"
-                : "";
+            const repliesContainer = document.getElementById("repliesContainer");
+            repliesContainer.innerHTML = "";
+
+            if (data.error) {
+                repliesContainer.innerHTML = `<p>No replies yet. Be the first to respond!</p>`;
+                return;
+            }
+
+            // Display all replies at the same level (no nesting)
             data.forEach(reply => {
-                container.appendChild(createReplyElement(reply));
+                repliesContainer.appendChild(createReplyElement(reply));
             });
         })
-        .catch(error => console.error("Error loading replies:", error));
+        .catch(error => console.error("Error fetching replies:", error));
 }
 
-function createReplyElement(reply, level = 0) {
+// Function to create a reply element (Reply button is visible but does nothing for now)
+function createReplyElement(reply) {
     const replyDiv = document.createElement("div");
     replyDiv.classList.add("reply");
-    replyDiv.style.marginLeft = `${level * 20}px`;
 
     replyDiv.innerHTML = `
         <div class="reply-header">
-            <span class="reply-username">${reply.username}</span>
+            <span class="reply-username">User</span> 
             <small class="reply-time">(${reply.created_at})</small>
         </div>
         <p class="reply-content">${reply.reply}</p>
     `;
 
+    // Create and append the reply button (Does nothing for now)
     const replyButton = document.createElement("button");
-    replyButton.textContent = "Reply";
     replyButton.classList.add("reply-btn");
-
-    replyButton.addEventListener("click", () => {
-        replyButton.disabled = true;
-
-        const form = document.createElement("form");
-        form.innerHTML = `
-            <textarea required placeholder="Write a reply..."></textarea>
-            <button type="submit">Post</button>
-            <button type="button" class="cancel-btn">Cancel</button>
-        `;
-
-        form.querySelector(".cancel-btn").addEventListener("click", () => {
-            form.remove();
-            replyButton.disabled = false;
-        });
-
-        form.addEventListener("submit", function (e) {
-            e.preventDefault();
-            const replyText = form.querySelector("textarea").value.trim();
-            if (!replyText) {
-                alert("Reply cannot be empty!");
-                return;
-            }
-            const questionId = new URLSearchParams(window.location.search).get("id");
-            postReply(questionId, reply.id, replyText);
-        });
-
-        replyDiv.appendChild(form);
+    replyButton.setAttribute("data-id", reply.id);
+    replyButton.textContent = "Reply";
+    
+    // Placeholder for future functionality
+    replyButton.addEventListener("click", function () {
+        console.log("Reply button clicked for reply ID:", reply.id);
     });
 
     replyDiv.appendChild(replyButton);
-
-    if (reply.children && reply.children.length > 0) {
-        reply.children.forEach(child => {
-            replyDiv.appendChild(createReplyElement(child, level + 1));
-        });
-    }
-
+    
     return replyDiv;
 }
 
-function postReply(questionId, parentId = null, replyOverride = null) {
-    const replyInput = replyOverride ? { value: replyOverride } : document.getElementById("replyText");
+// Function to post a reply (Only allows replies to the main question)
+function postReply(questionId) {
+    const replyInput = document.getElementById("replyText");
     const replyText = replyInput.value.trim();
-    if (!replyText) return alert("Reply cannot be empty!");
+
+    if (!replyText) {
+        alert("Reply cannot be empty!");
+        return;
+    }
 
     const formData = new URLSearchParams();
     formData.append("question_id", questionId);
     formData.append("reply", replyText);
-    formData.append("username", getLoggedInUserFromURL());
-    if (parentId) formData.append("parent_id", parentId);
 
-    fetch("post_reply.php", {
+    fetch("/post_reply.php", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: formData.toString()
     })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                if (!replyOverride) replyInput.value = "";
-                loadReplies();
-            } else {
-                alert("Error: " + data.error);
-            }
-        })
-        .catch(error => console.error("Error:", error));
-}
-
-if (typeof module !== "undefined") {
-    module.exports = { postReply, loadReplies };
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            replyInput.value = ""; 
+            loadReplies(); // Refresh replies dynamically
+        } else {
+            alert("Error: " + data.error);
+        }
+    })
+    .catch(error => console.error("Error:", error));
 }
