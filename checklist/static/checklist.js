@@ -15,7 +15,7 @@ function toggleChecklist(event, checklistId) {
     }
 }
 
-// Function to toggle checklist items
+// Function to toggle the checklist items
 function toggleChecklist(checklistId) {
     const options = document.getElementById(checklistId);
     const toggleButton = document.querySelector(`button[onclick="toggleChecklist('${checklistId}')"]`);
@@ -36,13 +36,13 @@ function toggleChecklist(checklistId) {
 
 // Function to update progress bar
 function updateProgressBar() {
-    // Get total number of checkboxes
+    // Get the total number of checkboxes
     const totalCheckboxes = document.querySelectorAll('.checklist-item input[type="checkbox"]').length;
     
-    // Get number of checked checkboxes
+    // Get the number of checked checkboxes
     const checkedCheckboxes = document.querySelectorAll('.checklist-item input[type="checkbox"]:checked').length;
     
-    // Calculate percentage of completion
+    // Calculate the percent completed
     const percentage = (checkedCheckboxes / totalCheckboxes) * 100;
 
     // Update progress bar width
@@ -51,7 +51,7 @@ function updateProgressBar() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Add event listener to each checkbox
+    // Add an event listener to each checkbox
     const checkboxes = document.querySelectorAll('.checklist-item input[type="checkbox"]');
     
     checkboxes.forEach(checkbox => {
@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
     
-    // Initialize progress bar
+    // Initialize the progress bar
     updateProgressBar();
 });
 

@@ -10,14 +10,14 @@ def get_db():
 
 @app.route('/')
 def index():
-    user_id = "user1"  # Hardcoded for now
+    user_id = "user1"
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute("SELECT ModuleItemID FROM UserSelections WHERE user_id = ?", (user_id,))
     selected_items = [row['ModuleItemID'] for row in cursor.fetchall()]
     conn.close()
     
-    # Render your existing HTML file
+    # Render HTML file
     return render_template("checklist.html", userSelections=selected_items)
 
 @app.route('/saveChecklist', methods=['POST'])
