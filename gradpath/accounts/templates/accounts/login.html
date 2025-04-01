@@ -1,16 +1,29 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Login to GradPath</h2>
-<form method="post">
-    {% csrf_token %}
-    <input type="text" name="username" placeholder="Username" required>
-    <input type="password" name="password" placeholder="Password" required>
-    <button type="submit">Login</button>
-</form>
-{% if messages %}
-    {% for message in messages %}
-        <p style="color: red;">{{ message }}</p>
-    {% endfor %}
-{% endif %}
+<div style="font-family: Arial, sans-serif;">
+    <div style="background-color: black; padding: 15px;">
+        <h1 style="color: white; margin: 0; text-align: center;">GradPath</h1>
+    </div>
+    
+    <div style="margin: 20px;">
+        <a href="{% url 'signup' %}" style="background-color: blue; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Sign-Up</a>
+        <a href="{% url 'login' %}" style="background-color: blue; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Login</a>
+    </div>
+
+    <div style="text-align: center; margin-top: 50px;">
+        <h2>Login to GradPath</h2>
+        <form method="post" style="display: inline-block; text-align: left;">
+            {% csrf_token %}
+            <input type="text" name="username" placeholder="Username" required style="display: block; margin: 10px auto; padding: 8px;">
+            <input type="password" name="password" placeholder="Password" required style="display: block; margin: 10px auto; padding: 8px;">
+            <button type="submit" style="background-color: blue; color: white; padding: 10px 20px; border: none;">Login</button>
+        </form>
+        {% if messages %}
+            {% for message in messages %}
+                <p style="color: red;">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

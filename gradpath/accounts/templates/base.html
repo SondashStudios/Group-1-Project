@@ -4,18 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}GradPath{% endblock %}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        
+        nav {
+            margin: 20px;
+        }
+        nav a {
+            display: block;
+            margin-bottom: 10px;
+            background-color: blue;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            width: fit-content;
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <h1>GradPath</h1>
-        <nav>
-            <a href="{% url 'signup' %}">Sign Up</a> |
-            <a href="{% url 'login' %}">Login</a>
-        </nav>
-    </header>
+    <header></header> <!-- Empty header to remove "GradPath" text -->
+    
+    <nav>
+        
+    </nav>
 
     <main>
         {% block content %}{% endblock %}
     </main>
 </body>
 </html>
+
