@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import gettext_lazy as _
-from .models import CustomUser, Resume
+from .models import CustomUser  # Import only CustomUser from accounts
+from resumes.models import Resume  # ✅ Import Resume from the correct app
 
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):

@@ -1,4 +1,5 @@
-/* Add styles for progress bar container */
+/* Stylying for progress bar container */
+
 #progressBarContainer {
     background-color: #ddd; /* Background color for the progress bar container */
     height: 20px; /* Height of the progress bar container */

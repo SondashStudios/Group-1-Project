@@ -7,121 +7,128 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
-    fetch(`/get_question.php?id=${questionId}`)
+    fetch(`get_question.php?id=${questionId}`)
         .then(response => response.json())
         .then(data => {
-            document.getElementById("questionTitle").innerText = data.title;
-        });
+            document.getElementById("questionTitle").innerText = data.error ? "Invalid Question ID" : data.title;
+        })
+        .catch(error => console.error("Error fetching question:", error));
 
     loadReplies();
 
-    document.getElementById("postReplyBtn").addEventListener("click", function () {
+    document.getElementById("replyForm").addEventListener("submit", function (e) {
+        e.preventDefault();
         postReply(questionId);
     });
 });
 
-// Function to load replies
-function loadReplies() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const questionId = urlParams.get("id");
-
-    fetch(`/get_replies.php?id=${questionId}`)
-        .then(response => response.json())
-        .then(replies => {
-            const repliesContainer = document.getElementById("repliesContainer");
-            repliesContainer.innerHTML = "";
-            replies.forEach(reply => {
-                const replyElement = createReplyElement(reply);
-                repliesContainer.appendChild(replyElement);
-            });
-        });
+function getLoggedInUserFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get("user") || "Anonymous";
 }
 
-// Function to create a reply element with indentation
-function createReplyElement(reply, depth = 0) {
+function loadReplies() {
+    const questionId = new URLSearchParams(window.location.search).get("id");
+
+    fetch(`get_replies.php?id=${questionId}`)
+        .then(response => response.json())
+        .then(data => {
+            const container = document.getElementById("repliesContainer");
+            container.innerHTML = data.length === 0
+                ? "<p>No replies yet. Be the first to respond!</p>"
+                : "";
+            data.forEach(reply => {
+                container.appendChild(createReplyElement(reply));
+            });
+        })
+        .catch(error => console.error("Error loading replies:", error));
+}
+
+function createReplyElement(reply, level = 0) {
     const replyDiv = document.createElement("div");
     replyDiv.classList.add("reply");
-    replyDiv.style.marginLeft = `${depth * 30}px`; // Indent replies
+    replyDiv.style.marginLeft = `${level * 20}px`;
+
     replyDiv.innerHTML = `
         <div class="reply-header">
-            <span class="reply-username">User</span> 
+            <span class="reply-username">${reply.username}</span>
             <small class="reply-time">(${reply.created_at})</small>
         </div>
         <p class="reply-content">${reply.reply}</p>
-        <button class="reply-btn" data-id="${reply.id}">Reply</button>
-        <div id="reply-box-${reply.id}" class="nested-reply-box"></div>
-        <div class="nested-replies"></div>
     `;
 
-    // Handle nested replies
+    const replyButton = document.createElement("button");
+    replyButton.textContent = "Reply";
+    replyButton.classList.add("reply-btn");
+
+    replyButton.addEventListener("click", () => {
+        replyButton.disabled = true;
+
+        const form = document.createElement("form");
+        form.innerHTML = `
+            <textarea required placeholder="Write a reply..."></textarea>
+            <button type="submit">Post</button>
+            <button type="button" class="cancel-btn">Cancel</button>
+        `;
+
+        form.querySelector(".cancel-btn").addEventListener("click", () => {
+            form.remove();
+            replyButton.disabled = false;
+        });
+
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
+            const replyText = form.querySelector("textarea").value.trim();
+            if (!replyText) {
+                alert("Reply cannot be empty!");
+                return;
+            }
+            const questionId = new URLSearchParams(window.location.search).get("id");
+            postReply(questionId, reply.id, replyText);
+        });
+
+        replyDiv.appendChild(form);
+    });
+
+    replyDiv.appendChild(replyButton);
+
     if (reply.children && reply.children.length > 0) {
-        const nestedContainer = replyDiv.querySelector(".nested-replies");
-        reply.children.forEach(childReply => {
-            nestedContainer.appendChild(createReplyElement(childReply, depth + 1));
+        reply.children.forEach(child => {
+            replyDiv.appendChild(createReplyElement(child, level + 1));
         });
     }
-
-    // Attach event listener for reply button
-    replyDiv.querySelector(".reply-btn").addEventListener("click", function () {
-        showReplyBox(reply.id);
-    });
 
     return replyDiv;
 }
 
-// Function to show the reply input box
-function showReplyBox(parentId) {
-    const replyBox = document.getElementById(`reply-box-${parentId}`);
-    if (replyBox.innerHTML.trim() !== "") return;
-
-    replyBox.innerHTML = `
-        <textarea id="reply-input-${parentId}" class="nested-reply-text" placeholder="Write a reply..."></textarea>
-        <button class="submit-nested-reply" onclick="postReply(null, ${parentId})">Post Reply</button>
-        <button class="cancel-nested-reply" onclick="cancelReply(${parentId})">Cancel</button>
-    `;
-}
-
-// Function to post a reply (Handles both main & nested replies)
-function postReply(questionId = null, parentId = null) {
-    const replyInput = parentId
-        ? document.getElementById(`reply-input-${parentId}`)
-        : document.getElementById("replyText");
-
+function postReply(questionId, parentId = null, replyOverride = null) {
+    const replyInput = replyOverride ? { value: replyOverride } : document.getElementById("replyText");
     const replyText = replyInput.value.trim();
-    if (!replyText) {
-        alert("Reply cannot be empty!");
-        return;
-    }
+    if (!replyText) return alert("Reply cannot be empty!");
 
     const formData = new URLSearchParams();
-    formData.append("question_id", questionId || new URLSearchParams(window.location.search).get("id"));
+    formData.append("question_id", questionId);
     formData.append("reply", replyText);
-    if (parentId) {
-        formData.append("parent_id", parentId);
-    }
+    formData.append("username", getLoggedInUserFromURL());
+    if (parentId) formData.append("parent_id", parentId);
 
-    fetch("/post_reply.php", {
+    fetch("post_reply.php", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: formData.toString()
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            replyInput.value = ""; 
-            if (parentId) {
-                document.getElementById(`reply-box-${parentId}`).innerHTML = "";
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                if (!replyOverride) replyInput.value = "";
+                loadReplies();
+            } else {
+                alert("Error: " + data.error);
             }
-            loadReplies(); // Refresh replies dynamically
-        } else {
-            alert("Error: " + data.error);
-        }
-    })
-    .catch(error => console.error("Error:", error));
+        })
+        .catch(error => console.error("Error:", error));
 }
 
-// Function to close the reply box on cancel
-function cancelReply(parentId) {
-    const replyBox = document.getElementById(`reply-box-${parentId}`);
-    if (replyBox) replyBox.innerHTML = "";
+if (typeof module !== "undefined") {
+    module.exports = { postReply, loadReplies };
 }
