@@ -48,3 +48,28 @@ def welcome_view(request):
     response = render(request, 'accounts/welcome.html')
     response.set_cookie('gradpath_user', request.user.username)  
     return response
+
+
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.contrib.auth.models import User
+
+@login_required
+def account_settings(request):
+    if request.method == "POST":
+        username = request.POST.get("username")
+        email = request.POST.get("email")
+
+        if User.objects.filter(email=email).exclude(id=request.user.id).exists():
+            messages.error(request, "This email is already registered with another account.")
+        else:
+            request.user.username = username
+            request.user.email = email
+            request.user.save()
+            messages.success(request, "Profile updated successfully!")
+
+        return redirect("account_settings")
+
+    return render(request, "account_settings.html")
