@@ -56,55 +56,44 @@ def welcome_view(request):
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.models import User
 
 @login_required
 def account_settings(request):
     if request.method == "POST":
-        # Handle username and email update
         username = request.POST.get("username")
         email = request.POST.get("email")
 
-        # Check if the email is already registered with another user
+        # Validate email and username uniqueness
         if User.objects.filter(email=email).exclude(id=request.user.id).exists():
             messages.error(request, "This email is already registered with another account.")
-        
-        # Check if the username is already taken by another user
         elif User.objects.filter(username=username).exclude(id=request.user.id).exists():
             messages.error(request, "This username is already taken. Please choose a different one.")
-        
         else:
-            # Update the user's username and email if no conflicts
             request.user.username = username
             request.user.email = email
             request.user.save()
             messages.success(request, "Profile updated successfully!")
 
-        # Handle password change (password1 and password2 fields must match)
-        password1 = request.POST.get('password1')
-        password2 = request.POST.get('password2')
-
-        if password1 and password2:  # Check if password fields are submitted
-            if password1 == password2:
-                password_form = PasswordChangeForm(request.user, request.POST)
-                if password_form.is_valid():
-                    user = password_form.save()  # Save the new password
-                    update_session_auth_hash(request, user)  # Keep user logged in after password change
-                    messages.success(request, "Password updated successfully!")
-                    return redirect("account_settings")
-                else:
-                    messages.error(request, "Password change failed. Please check your input.")
+        # Handle password change
+        password_form = SetPasswordForm(request.user, request.POST)
+        if request.POST.get("new_password1") or request.POST.get("new_password2"):
+            if password_form.is_valid():
+                user = password_form.save()
+                update_session_auth_hash(request, user)
+                messages.success(request, "Password updated successfully!")
+                return redirect("account_settings")
             else:
-                messages.error(request, "The passwords do not match.")
-        
-        # If not submitting password, just use the password form
+                messages.error(request, "Password change failed. Please check your input.")
         else:
-            password_form = PasswordChangeForm(request.user)
+            # If no password change attempt, still pass an empty form for rendering
+            password_form = SetPasswordForm(request.user)
 
     else:
-        password_form = PasswordChangeForm(request.user)  # Empty form for GET request
+        # GET request: show current settings and blank password form
+        password_form = SetPasswordForm(request.user)
 
     return render(request, "account_settings.html", {"password_form": password_form})
 
