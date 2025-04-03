@@ -26,5 +26,28 @@
             {% endfor %}
         </div>
     {% endif %}
+
+    <!-- Make sure the button is outside the form -->
+    <div style="margin-top: 20px;">
+        <a href="{% url 'welcome' %}" class="btn home-btn">Home</a>
+    </div>
 </div>
+
+<style>
+    .home-btn {
+        display: inline-block;
+        margin-top: 15px;
+        padding: 10px 20px;
+        background-color: #0056b3;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        text-align: center;
+    }
+
+    .home-btn:hover {
+        background-color: #0056b3;
+    }
+</style>
+
 {% endblock %}

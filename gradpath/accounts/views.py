@@ -4,6 +4,9 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import SignUpForm
 
+from django.contrib.auth import get_user_model
+
+User = get_user_model()  # This ensures you're using 'accounts.CustomUser'
 
 def signup_view(request):
     if request.method == 'POST':
@@ -62,9 +65,16 @@ def account_settings(request):
         username = request.POST.get("username")
         email = request.POST.get("email")
 
+        # Check if the email is already registered with another user
         if User.objects.filter(email=email).exclude(id=request.user.id).exists():
             messages.error(request, "This email is already registered with another account.")
+        
+        # Check if the username is already taken by another user
+        elif User.objects.filter(username=username).exclude(id=request.user.id).exists():
+            messages.error(request, "This username is already taken. Please choose a different one.")
+        
         else:
+            # Update the user's username and email if no conflicts
             request.user.username = username
             request.user.email = email
             request.user.save()
@@ -73,3 +83,23 @@ def account_settings(request):
         return redirect("account_settings")
 
     return render(request, "account_settings.html")
+
+
+from django.contrib.auth import get_user_model
+from django.http import JsonResponse
+
+User = get_user_model()  # Get the CustomUser model
+
+def update_email(request):
+    if request.method == "POST":
+        email = request.POST.get("email")
+        
+        if User.objects.filter(email=email).exclude(id=request.user.id).exists():
+            return JsonResponse({"error": "This email is already in use."}, status=400)
+
+        # Proceed with updating email...
+        request.user.email = email
+        request.user.save()
+        return JsonResponse({"message": "Email updated successfully!"})
+
+    return JsonResponse({"error": "Invalid request"}, status=400)
