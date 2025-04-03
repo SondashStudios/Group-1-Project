@@ -53,15 +53,17 @@ def welcome_view(request):
     return response
 
 
-
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.models import User
 
 @login_required
 def account_settings(request):
     if request.method == "POST":
+        # Handle username and email update
         username = request.POST.get("username")
         email = request.POST.get("email")
 
@@ -80,9 +82,31 @@ def account_settings(request):
             request.user.save()
             messages.success(request, "Profile updated successfully!")
 
-        return redirect("account_settings")
+        # Handle password change (password1 and password2 fields must match)
+        password1 = request.POST.get('password1')
+        password2 = request.POST.get('password2')
 
-    return render(request, "account_settings.html")
+        if password1 and password2:  # Check if password fields are submitted
+            if password1 == password2:
+                password_form = PasswordChangeForm(request.user, request.POST)
+                if password_form.is_valid():
+                    user = password_form.save()  # Save the new password
+                    update_session_auth_hash(request, user)  # Keep user logged in after password change
+                    messages.success(request, "Password updated successfully!")
+                    return redirect("account_settings")
+                else:
+                    messages.error(request, "Password change failed. Please check your input.")
+            else:
+                messages.error(request, "The passwords do not match.")
+        
+        # If not submitting password, just use the password form
+        else:
+            password_form = PasswordChangeForm(request.user)
+
+    else:
+        password_form = PasswordChangeForm(request.user)  # Empty form for GET request
+
+    return render(request, "account_settings.html", {"password_form": password_form})
 
 
 from django.contrib.auth import get_user_model
