@@ -22,11 +22,6 @@ def signup_view(request):
         form = SignUpForm()
     return render(request, 'accounts/signup.html', {'form': form})
 
-<<<<<<< HEAD
-=======
-
-# LOGIN VIEW
->>>>>>> 40817b4aa775933b8909b38f499cbba3dee6d8b9
 def login_view(request):
     if request.method == 'POST':
         username = request.POST['username']
