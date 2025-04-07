@@ -1,128 +1,105 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse
-from django.template.loader import get_template
-from django.views.generic.edit import CreateView
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import render, redirect
+from django.contrib.auth import login, authenticate, logout
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import SetPasswordForm
+from django.contrib.auth import update_session_auth_hash, get_user_model
+from django.http import JsonResponse
+from .forms import SignUpForm
 
-from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticated
-
-from xhtml2pdf import pisa
-from .models import Resume
-from .forms import ResumeForm
-from .serializers import ResumeSerializer
-
-# API View for Resume CRUD
-class ResumeViewSet(viewsets.ModelViewSet):
-    serializer_class = ResumeSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        return Resume.objects.filter(user=self.request.user)
-
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
-
-# Form-based Resume Creation View (UI form)
-class ResumeCreateView(LoginRequiredMixin, CreateView):
-    model = Resume
-    form_class = ResumeForm
-    template_name = 'resumes/resume_form.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        try:
-            context['resume'] = Resume.objects.filter(user=self.request.user).last()
-        except Exception as e:
-            print("🔥 DEBUG: Error in get_context_data:", e)
-            context['resume'] = None
-        return context
-
-    def form_valid(self, form):
-        try:
-            form.instance.user = self.request.user
-            resume = form.save()
-            if resume.pdf_file:
-                print("✅ File saved to:", resume.pdf_file.path)
-            else:
-                print("⚠️ No PDF file attached.")
-            return redirect('resumes:generate_pdf', resume_id=resume.id)
-        except Exception as e:
-            print("🔥 DEBUG: Error during resume save:", e)
-            return HttpResponse("Something went wrong. Check server logs.", status=500)
+User = get_user_model()  # Ensures you're using the CustomUser model
 
 
-# Optional fallback handler
-@login_required
-def resume_create(request):
-    resume = Resume.objects.filter(user=request.user).last()
-
+# SIGNUP VIEW → goes to login after successful signup
+def signup_view(request):
     if request.method == 'POST':
-        form = ResumeForm(request.POST, request.FILES)
+        form = SignUpForm(request.POST)
         if form.is_valid():
-            resume = form.save(commit=False)
-            resume.user = request.user
-            resume.save()
-            return render(request, 'resumes/resume_form.html', {'form': ResumeForm(), 'resume': resume})
+            user = form.save()
+            messages.success(request, "Account created successfully! Please log in.")
+            return redirect('login')  # redirect to login after signup
     else:
-        form = ResumeForm()
+        form = SignUpForm()
+    return render(request, 'accounts/signup.html', {'form': form})
 
-    return render(request, 'resumes/resume_form.html', {'form': form, 'resume': resume})
 
+# LOGIN VIEW
+def login_view(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user:
+            login(request, user)
+            response = redirect('welcome')
+            response.set_cookie('gradpath_user', user.username)
+            return response
+        else:
+            messages.error(request, 'Invalid username or password.')
+    return render(request, 'accounts/login.html')
+
+
+# LOGOUT VIEW
+def logout_view(request):
+    logout(request)
+    return redirect('login')
+
+
+# HOME VIEW
+def home_view(request):
+    return render(request, 'home.html')
+
+
+# WELCOME PAGE
 @login_required
-def generate_pdf(request, resume_id):
-    resume = get_object_or_404(Resume, id=resume_id, user=request.user)
-
-    skills_list = [skill.strip() for skill in resume.skills.split(",")] if resume.skills else []
-
-    resume_data = {
-        "name": resume.title,
-        "summary": resume.summary,
-        "skills": skills_list,
-        "education": resume.education,
-        "experience": resume.experience,
-        "certifications": resume.certifications,
-    }
-
-    template = get_template('resumes/resume_pdf_template.html')
-    html = template.render(resume_data)
-
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = f'attachment; filename="resume_{resume_id}.pdf"'
-
-    pisa_status = pisa.CreatePDF(html, dest=response)
-    if pisa_status.err:
-        return HttpResponse('PDF generation failed', status=500)
-
+def welcome_view(request):
+    response = render(request, 'accounts/welcome.html')  # keep this for showing message + button
+    response.set_cookie('gradpath_user', request.user.username)
     return response
 
-@login_required
-def delete_resume(request, resume_id):
-    resume = get_object_or_404(Resume, id=resume_id, user=request.user)
-    if request.method == 'POST':
-        resume.delete()
-        return redirect('resumes:resume_list')
-    return render(request, 'resumes/confirm_delete.html', {'resume': resume})
 
+# ACCOUNT SETTINGS (Edit username, email, password)
 @login_required
-def resume_list(request):
-    resumes = Resume.objects.filter(user=request.user)
-    return render(request, 'resumes/resume_list.html', {'resumes': resumes})
+def account_settings(request):
+    if request.method == "POST":
+        username = request.POST.get("username")
+        email = request.POST.get("email")
 
-@login_required
-def resume_detail(request, resume_id):
-    resume = get_object_or_404(Resume, id=resume_id, user=request.user)
-    return render(request, 'resumes/resume_detail.html', {'resume': resume})
+        if User.objects.filter(email=email).exclude(id=request.user.id).exists():
+            messages.error(request, "This email is already registered with another account.")
+        elif User.objects.filter(username=username).exclude(id=request.user.id).exists():
+            messages.error(request, "This username is already taken.")
+        else:
+            request.user.username = username
+            request.user.email = email
+            request.user.save()
+            messages.success(request, "Profile updated successfully!")
 
-@login_required
-def resume_edit(request, resume_id):
-    resume = get_object_or_404(Resume, id=resume_id, user=request.user)
-    if request.method == 'POST':
-        form = ResumeForm(request.POST, request.FILES, instance=resume)
-        if form.is_valid():
-            form.save()
-            return redirect('resumes:resume_detail', resume_id=resume.id)
+        # Password change
+        password_form = SetPasswordForm(request.user, request.POST)
+        if request.POST.get("new_password1") or request.POST.get("new_password2"):
+            if password_form.is_valid():
+                user = password_form.save()
+                update_session_auth_hash(request, user)
+                messages.success(request, "Password updated successfully!")
+                return redirect("account_settings")
+            else:
+                messages.error(request, "Password change failed. Please check your input.")
+        else:
+            password_form = SetPasswordForm(request.user)
     else:
-        form = ResumeForm(instance=resume)
-    return render(request, 'resumes/resume_form.html', {'form': form, 'resume': resume})
+        password_form = SetPasswordForm(request.user)
+
+    return render(request, "account_settings.html", {"password_form": password_form})
+
+
+# AJAX EMAIL UPDATE (Optional Feature)
+@login_required
+def update_email(request):
+    if request.method == "POST":
+        email = request.POST.get("email")
+        if User.objects.filter(email=email).exclude(id=request.user.id).exists():
+            return JsonResponse({"error": "This email is already in use."}, status=400)
+        request.user.email = email
+        request.user.save()
+        return JsonResponse({"message": "Email updated successfully!"})
