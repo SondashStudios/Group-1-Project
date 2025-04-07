@@ -6,17 +6,27 @@
         <h1 style="color: white; margin: 0; text-align: center;">GradPath</h1>
     </div>
 
-
-
     <div style="text-align: center; margin-top: 50px;">
         <h2>Welcome to GradPath!</h2>
         <p>You are now logged in as <strong>{{ request.user.username }}</strong>.</p>
 
         <div style="margin-top: 20px;">
             <a href="http://localhost:8000/index.html?user={{ request.user.username }}" target="_blank" style="background-color: green; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Discussion Board</a>
+<<<<<<< HEAD
             <a href="http://127.0.0.1:5000/" style="background-color: orange; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Learning Material</a>
+=======
+
+>>>>>>> 40817b4aa775933b8909b38f499cbba3dee6d8b9
             <a href="{% url 'account_settings' %}" style="background-color: blue; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Account Settings</a>
+
             <a href="{% url 'logout' %}" style="background-color: red; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Logout</a>
+<<<<<<< HEAD
+=======
+
+            <a href="{% url 'checklist' %}" style="background-color: orange; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Learning Material</a>
+
+            <a href="{% url 'resumes:resume_create' %}" style="background-color: purple; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Resume Builder</a>
+>>>>>>> 40817b4aa775933b8909b38f499cbba3dee6d8b9
         </div>
     </div>
 </div>
