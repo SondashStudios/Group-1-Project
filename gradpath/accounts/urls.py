@@ -9,5 +9,4 @@ urlpatterns = [
     path('logout/', logout_view, name='logout'),
     path('welcome/', welcome_view, name='welcome'),
     path('account-settings/', account_settings, name='account_settings'),
-    path('checklist/', include('checklist.urls')),
 ]

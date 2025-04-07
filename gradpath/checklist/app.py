@@ -10,19 +10,27 @@ def get_db():
 
 @app.route('/')
 def index():
-    user_id = "user1"
+    # Retrieve the username from the cookie set by Django
+    user_id = request.cookies.get('gradpath_user')
+
+    if not user_id:
+        return "User not logged in or no user ID provided.", 403
+
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute("SELECT ModuleItemID FROM UserSelections WHERE user_id = ?", (user_id,))
     selected_items = [row['ModuleItemID'] for row in cursor.fetchall()]
     conn.close()
     
-    # Render HTML file
     return render_template("checklist.html", userSelections=selected_items)
 
 @app.route('/saveChecklist', methods=['POST'])
 def saveChecklist():
-    user_id = "user1"
+    user_id = request.cookies.get('gradpath_user')
+    
+    if not user_id:
+        return "User not logged in or no user ID provided.", 403
+
     selected_items = request.form.getlist("moduleItemCheckboxInput")
 
     conn = get_db()
