@@ -1,9 +1,10 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='checklist.css') }}">
+    <link rel="stylesheet" href="{% static 'checklist.css' %}">
     <title>Checklist</title>
 </head>
 <body>
@@ -185,7 +186,7 @@
     <p>Copyright © 2024 GradPath. All rights reserved.</p>
 </footer>
 
-<script src="{{ url_for('static', filename='checklist.js') }}"></script>
+<script src="{% static 'checklist.js' %}"></script>
 
 
 </body>
