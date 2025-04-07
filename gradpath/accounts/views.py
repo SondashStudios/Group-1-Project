@@ -6,25 +6,19 @@ from .forms import SignUpForm
 
 from django.contrib.auth import get_user_model
 
-<<<<<<< HEAD
-=======
 User = get_user_model()  # This ensures you're using 'accounts.CustomUser'
 
->>>>>>> 6b98748456f45f5675a084abc678b7555aae5c0b
 def signup_view(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
-<<<<<<< HEAD
             return redirect('resumes:resume_create')  # ✅ Redirect to Resume Creation Page
   
-=======
             response = redirect('resume-create')  # Redirect to Resume Creation Page
             response.set_cookie('gradpath_user', user.username)  
             return response
->>>>>>> 6b98748456f45f5675a084abc678b7555aae5c0b
     else:
         form = SignUpForm()
     return render(request, 'accounts/signup.html', {'form': form})
@@ -37,13 +31,10 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         if user:
             login(request, user)
-<<<<<<< HEAD
             return redirect('resumes:resume_create')  # ✅ Redirects to the resume form
-=======
             response = redirect('welcome')
             response.set_cookie('gradpath_user', user.username)
             return response
->>>>>>> 6b98748456f45f5675a084abc678b7555aae5c0b
         else:
             messages.error(request, 'Invalid username or password.')
     return render(request, 'accounts/login.html')
@@ -62,9 +53,7 @@ def home_view(request):
 
 @login_required
 def welcome_view(request):
-<<<<<<< HEAD
     return redirect('resumes:resume_create')  # Ensure even welcome page redirects(Shaza)
-=======
     response = render(request, 'accounts/welcome.html')
     response.set_cookie('gradpath_user', request.user.username)  
     return response
@@ -133,4 +122,3 @@ def update_email(request):
         return JsonResponse({"message": "Email updated successfully!"})
 
     return JsonResponse({"error": "Invalid request"}, status=400)
->>>>>>> 6b98748456f45f5675a084abc678b7555aae5c0b
