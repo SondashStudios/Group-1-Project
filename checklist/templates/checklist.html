@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="checklist.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='checklist.css') }}">
     <title>Checklist</title>
 </head>
 <body>
@@ -13,7 +13,6 @@
         <nav>
             <a href="home.html" class="header-link">Home</a>
             <a href="checklist.html" class="header-link">My Learning</a>
-            <a href="myProgress.html" class="header-link">My Progress</a>
         </nav>
     </header>
 
@@ -46,7 +45,7 @@
                     <input type="checkbox" id="item2">
                 </div>
                 <div class="checklist-item">
-                    <label for="item3"><a href="https://www.indeed.com/career-advice/resumes-cover-letters/what-to-include-on-a-resume" target="_blank" rel="noopener noreferrer">What should you include on a resume</a></label>
+                    <label for="item3"><a href="https://www.indeed.com/career-advice/resumes-cover-letters/resume-writing-101" target="_blank" rel="noopener noreferrer">What should you include on a resume</a></label>
                     <input type="checkbox" id="item3">
                 </div>
                 <div class="checklist-item">
@@ -108,7 +107,7 @@
                     <input type="checkbox" id="item11">
                 </div>
                 <div class="checklist-item">
-                    <label for="item12"><a href="https://www.themuse.com/advice/star-interview-method" target="_blank" rel="noopener noreferrer">Using the STAR structure to tailor your approach</a></label>
+                    <label for="item12"><a href="https://capd.mit.edu/resources/the-star-method-for-behavioral-interviews/" target="_blank" rel="noopener noreferrer">Using the STAR structure in your interview approach</a></label>
                     <input type="checkbox" id="item12">
                 </div>
                 <div class="checklist-item">
@@ -133,7 +132,7 @@
             </div>
             <div class="options" id="checklist6">
                 <div class="checklist-item">
-                    <label for="item15"><a href="https://www.coursera.org/articles/how-to-ask-for-a-letter-of-recommendation-template-tips" target="_blank" rel="noopener noreferrer">How to attain reference letters</a></label>
+                    <label for="item15"><a href="https://www.coursera.org/articles/how-to-ask-for-a-letter-of-recommendation-template-tips" target="_blank" rel="noopener noreferrer">How to get letters of recommendation</a></label>
                     <input type="checkbox" id="item15">
                 </div>
                 <div class="checklist-item">
@@ -186,7 +185,7 @@
     <p>Copyright © 2024 GradPath. All rights reserved.</p>
 </footer>
 
-<script src="checklist.js"></script>
+<script src="{{ url_for('static', filename='checklist.js') }}"></script>
 
 
 </body>
