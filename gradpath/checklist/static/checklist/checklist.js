@@ -1,25 +1,8 @@
-function toggleChecklist(event, checklistId) {
-    event.preventDefault();
-    
-    const options = document.getElementById(checklistId);
-    const toggleButton = document.querySelector(`button[onclick="toggleChecklist('${checklistId}')"]`);
-    
-    if (options.style.maxHeight === '0px' || options.style.maxHeight === '') {
-        options.style.maxHeight = '500px'; // Adjust to fit content
-        options.style.opacity = '1';
-        toggleButton.classList.add('expanded');
-    } else {
-        options.style.maxHeight = '0';
-        options.style.opacity = '0';
-        toggleButton.classList.remove('expanded');
-    }
-}
-
-// Function to toggle the checklist items
+// Function to toggle checklist items
 function toggleChecklist(checklistId) {
     const options = document.getElementById(checklistId);
     const toggleButton = document.querySelector(`button[onclick="toggleChecklist('${checklistId}')"]`);
-    
+
     if (options.style.maxHeight === '0px' || options.style.maxHeight === '') {
         options.style.maxHeight = '500px'; // Adjust to fit content
         options.style.opacity = '1';
@@ -36,13 +19,13 @@ function toggleChecklist(checklistId) {
 
 // Function to update progress bar
 function updateProgressBar() {
-    // Get the total number of checkboxes
+    // Get total number of checkboxes
     const totalCheckboxes = document.querySelectorAll('.checklist-item input[type="checkbox"]').length;
     
-    // Get the number of checked checkboxes
+    // Get number of checked checkboxes
     const checkedCheckboxes = document.querySelectorAll('.checklist-item input[type="checkbox"]:checked').length;
     
-    // Calculate the percent completed
+    // Calculate percentage of completion
     const percentage = (checkedCheckboxes / totalCheckboxes) * 100;
 
     // Update progress bar width
@@ -51,7 +34,7 @@ function updateProgressBar() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Add an event listener to each checkbox
+    // Add event listener to each checkbox
     const checkboxes = document.querySelectorAll('.checklist-item input[type="checkbox"]');
     
     checkboxes.forEach(checkbox => {
@@ -61,7 +44,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
     
-    // Initialize the progress bar
+    // Initialize progress bar
     updateProgressBar();
 });
-
