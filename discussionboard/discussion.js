@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", () => {
     const urlParams = new URLSearchParams(window.location.search);
     const questionId = urlParams.get("id");
 
@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     loadReplies();
 
-    document.getElementById("replyForm").addEventListener("submit", function (e) {
+    document.getElementById("replyForm").addEventListener("submit", (e) => {
         e.preventDefault();
         postReply(questionId);
     });
@@ -51,8 +51,6 @@ function createReplyElement(reply, level = 0) {
 
     const storageKey = `voted-${reply.id}`;
     const voteKey = `vote-count-${reply.id}`;
-
-    // Get vote count from localStorage or initialize to 0
     let voteCount = parseInt(localStorage.getItem(voteKey)) || 0;
 
     replyDiv.innerHTML = `
@@ -105,6 +103,7 @@ function createReplyElement(reply, level = 0) {
 
     replyButton.addEventListener("click", () => {
         replyButton.disabled = true;
+
         const form = document.createElement("form");
         form.innerHTML = `
             <textarea required placeholder="Write a reply..."></textarea>
@@ -141,8 +140,6 @@ function createReplyElement(reply, level = 0) {
 
     return replyDiv;
 }
-
-
 
 function postReply(questionId, parentId = null, replyOverride = null) {
     const replyInput = replyOverride ? { value: replyOverride } : document.getElementById("replyText");

@@ -93,6 +93,7 @@ textarea {
     margin-left: 30px;
 }
 
+
 .upvote-btn,
 .downvote-btn {
     background-color: transparent;  /* Transparent background */
@@ -115,10 +116,4 @@ textarea {
     align-items: center;
     gap: 4px;
 }
-
-
-
-
-
-
 
