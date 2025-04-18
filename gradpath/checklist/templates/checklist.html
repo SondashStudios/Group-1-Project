@@ -1,0 +1,196 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'checklist/checklist.css' %}">
+    <title>Checklist</title>
+</head>
+
+<body>
+    <form method="POST">
+        {% csrf_token %}
+
+    <header>
+        <h1>GradPath</h1>
+        <nav>
+            <a href="home.html" class="header-link">Home</a>
+            <a href="checklist.html" class="header-link">My Learning</a>
+        </nav>
+    </header>
+
+        <!-- Progress bar -->
+        <div id="progressBarContainer">
+            <div id="progressBar"></div>
+        </div>
+    
+
+
+    <!-- Subheader for the learning modules -->
+    <div class="subheader">
+        <h2>Learning Modules</h2>
+    </div>
+
+    <div class="container">
+        <div class="checklist">
+            <div class="header">
+                <button type="button" onclick="toggleChecklist('checklist1')" class="toggle-button"></button>
+                <h2>Resume Workshop</h2>
+            </div>
+            <div class="options" id="checklist1">
+                <div class="checklist-item">
+                    <label for="item1"><a href="https://edu.gcfglobal.org/en/resumewriting/why-you-need-a-resume/1/" target="_blank" rel="noopener noreferrer">The importance of a strong resume</a></label>
+                    <input type="checkbox" id="item1" name="moduleItemCheckboxInput" value="item1" {% if 'item1' in userSelections %}checked{% endif %}>
+                </div>
+                <div class="checklist-item">
+                    <label for="item2"><a href="https://www.myperfectresume.com/resume/formats" target="_blank" rel="noopener noreferrer">Common resume templates</a></label>
+                    <input type="checkbox" id="item2" name="moduleItemCheckboxInput" value="item2" {% if 'item2' in userSelections %}checked{% endif %}>
+                </div>
+                <div class="checklist-item">
+                    <label for="item3"><a href="https://www.indeed.com/career-advice/resumes-cover-letters/resume-writing-101" target="_blank" rel="noopener noreferrer">What should you include on a resume</a></label>
+                    <input type="checkbox" id="item3" name="moduleItemCheckboxInput" value="item3" {% if 'item3' in userSelections %}checked{% endif %}>
+                </div>
+                <div class="checklist-item">
+                    <label for="item4"><a href="https://www.topresume.com/career-advice/a-quick-guide-to-education-placement-on-your-resume" target="_blank" rel="noopener noreferrer">How to tailor your educational and work experience</a></label>
+                    <input type="checkbox" id="item4" name="moduleItemCheckboxInput" value="item4" {% if 'item4' in userSelections %}checked{% endif %}>
+                </div>
+                <div class="checklist-item">
+                    <label for="item5"><a href="https://careers.dasa.ncsu.edu/resumes/" target="_blank" rel="noopener noreferrer">Examples of professional resumes</a></label>
+                    <input type="checkbox" id="item5" name="moduleItemCheckboxInput" value="item5" {% if 'item5' in userSelections %}checked{% endif %}>
+                </div>
+                <div class="checklist-item">
+                    <label for="item6"><a href="https://www.indeed.com/create-resume" target="_blank" rel="noopener noreferrer">Create one yourself</a></label>
+                    <input type="checkbox" id="item6" name="moduleItemCheckboxInput" value="item6" {% if 'item6' in userSelections %}checked{% endif %}>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+    <div class="container">
+        <div class="checklist">
+            <div class="header">
+                <button type="button" onclick="toggleChecklist('checklist2')" class="toggle-button"></button>
+                <h2>LinkedIn and Social Media</h2>
+            </div>
+            <div class="options" id="checklist2">
+                <div class="checklist-item">
+                    <label for="item7"><a href="https://www.techtarget.com/whatis/definition/LinkedIn" target="_blank" rel="noopener noreferrer">What is LinkedIn</a></label>
+                    <input type="checkbox" id="item7" name="moduleItemCheckboxInput" value="item7" {% if 'item7' in userSelections %}checked{% endif %}>
+                </div>
+                <div class="checklist-item">
+                    <label for="item8"><a href="https://blog.hubspot.com/marketing/linkedin-profile-perfection-cheat-sheet" target="_blank" rel="noopener noreferrer">Setting up a professional profile</a></label>
+                    <input type="checkbox" id="item8" name="moduleItemCheckboxInput" value="item8" {% if 'item8' in userSelections %}checked{% endif %}>
+                </div>
+                <div class="checklist-item">
+                    <label for="item9"><a href="https://www.business.com/articles/linkedin-networking-tips/" target="_blank" rel="noopener noreferrer">How does networking work on LinkedIn</a></label>
+                    <input type="checkbox" id="item9" name="moduleItemCheckboxInput" value="item9" {% if 'item9' in userSelections %}checked{% endif %}>
+                </div>
+                <div class="checklist-item">
+                    <label for="item10"><a href="https://www.inlytics.io/guide/linkedin-profile-examples" target="_blank" rel="noopener noreferrer">Examples of appealing LinkedIn profiles</a></label>
+                    <input type="checkbox" id="item10" name="moduleItemCheckboxInput" value="item10" {% if 'item10' in userSelections %}checked{% endif %}>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+    <div class="container">
+        <div class="checklist">
+            <div class="header">
+                <button type="button" onclick="toggleChecklist('checklist3')" class="toggle-button"></button>
+                <h2>Interview Preparation</h2>
+            </div>
+            <div class="options" id="checklist3">
+                <div class="checklist-item">
+                    <label for="item11"><a href="https://www.entrepreneur.com/living/heres-what-to-expect-in-a-job-interview-in-todays-job/457112" target="_blank" rel="noopener noreferrer">What to expect from an interview</a></label>
+                    <input type="checkbox" id="item11" name="moduleItemCheckboxInput" value="item11" {% if 'item11' in userSelections %}checked{% endif %}>
+                </div>
+                <div class="checklist-item">
+                    <label for="item12"><a href="https://capd.mit.edu/resources/the-star-method-for-behavioral-interviews/" target="_blank" rel="noopener noreferrer">Using the STAR structure in your interview approach</a></label>
+                    <input type="checkbox" id="item12" name="moduleItemCheckboxInput" value="item12" {% if 'item12' in userSelections %}checked{% endif %}>
+                </div>
+                <div class="checklist-item">
+                    <label for="item13"><a href="https://www.themuse.com/advice/star-interview-method" target="_blank" rel="noopener noreferrer">What do recruiters expect from you</a></label>
+                    <input type="checkbox" id="item13" name="moduleItemCheckboxInput" value="item13" {% if 'item13' in userSelections %}checked{% endif %}>
+                </div>
+                <div class="checklist-item">
+                    <label for="item14"><a href="https://www.youtube.com/watch?v=T1vTofBM_uA" target="_blank" rel="noopener noreferrer">Examples of mock interviews</a></label>
+                    <input type="checkbox" id="item14" name="moduleItemCheckboxInput" value="item14" {% if 'item14' in userSelections %}checked{% endif %}>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+    <div class="container">
+        <div class="checklist">
+            <div class="header">
+                <button type="button" onclick="toggleChecklist('checklist6')" class="toggle-button"></button>
+                <h2>Additional Advice</h2>
+            </div>
+            <div class="options" id="checklist6">
+                <div class="checklist-item">
+                    <label for="item15"><a href="https://www.coursera.org/articles/how-to-ask-for-a-letter-of-recommendation-template-tips" target="_blank" rel="noopener noreferrer">How to get letters of recommendation</a></label>
+                    <input type="checkbox" id="item15" name="moduleItemCheckboxInput" value="item15" {% if 'item15' in userSelections %}checked{% endif %}>
+                </div>
+                <div class="checklist-item">
+                    <label for="item16"><a href="https://www.forbes.com/sites/ashleystahl/2023/06/12/everything-you-need-to-know-about-a-cover-letter-and-why-its-still-important/?sh=48ca5c455665" target="_blank" rel="noopener noreferrer">Are cover letters important?</a></label>
+                    <input type="checkbox" id="item16" name="moduleItemCheckboxInput" value="item16" {% if 'item16' in userSelections %}checked{% endif %}>
+                </div>
+                <div class="checklist-item">
+                    <label for="item17"><a href="https://www.prospects.ac.uk/careers-advice/applying-for-jobs/what-skills-do-employers-want" target="_blank" rel="noopener noreferrer">Top skills employers want</a></label>
+                    <input type="checkbox" id="item17" name="moduleItemCheckboxInput" value="item17" {% if 'item17' in userSelections %}checked{% endif %}>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+    <div class="container">
+        <div class="checklist">
+            <div class="header">
+                <button type="button" onclick="toggleChecklist('checklist7')" class="toggle-button"></button>
+                <h2>Wrapping It All Up</h2>
+            </div>
+            <div class="options" id="checklist7">
+                <div class="checklist-item">
+                    <label for="item18"><a href="https://www.indeed.com/career-advice/finding-a-job/what-to-do-after-college" target="_blank" rel="noopener noreferrer">What should I do now?</a></label>
+                    <input type="checkbox" id="item18" name="moduleItemCheckboxInput" value="item18" {% if 'item18' in userSelections %}checked{% endif %}>
+                </div>
+                <div class="checklist-item">
+                    <label for="item19"><a href="https://www.creditkarma.com/income/i/upskilling" target="_blank" rel="noopener noreferrer">Putting newfound skills to work</a></label>
+                    <input type="checkbox" id="item19" name="moduleItemCheckboxInput" value="item19" {% if 'item19' in userSelections %}checked{% endif %}>
+                </div>
+                <div class="checklist-item">
+                    <label for="item20"><a href="https://sapienceanalytics.com/workforce-efficiency-expectations-vs-reality/" target="_blank" rel="noopener noreferrer">Expectations vs reality</a></label>
+                    <input type="checkbox" id="item20" name="moduleItemCheckboxInput" value="item20" {% if 'item20' in userSelections %}checked{% endif %}>
+                </div>
+                <div class="checklist-item">
+                    <label for="item21"><a href="https://www.vox.com/even-better/23719790/post-graduation-advice-life-work-money" target="_blank" rel="noopener noreferrer">Tips to keep in mind</a></label>
+                    <input type="checkbox" id="item21" name="moduleItemCheckboxInput" value="item21" {% if 'item21' in userSelections %}checked{% endif %}>
+                </div>
+                <div class="checklist-item">
+                    <label for="item22"><a href="https://www.linkedin.com/pulse/basic-advice-job-seeking-professionals-andrew-beach/" target="_blank" rel="noopener noreferrer">Advice from established professionals</a></label>
+                    <input type="checkbox" id="item22" name="moduleItemCheckboxInput" value="item22" {% if 'item22' in userSelections %}checked{% endif %}>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+    <div class="save-button-container" style="text-align: center; margin-top: 20px;">
+        <button type="submit" class="save-button">Save Progress</button>
+    </div>
+
+<footer>
+    <p>Copyright © 2025 GradPath. All rights reserved.</p>
+</footer>
+
+    </form>
+
+    <script src="{% static 'checklist/checklist.js' %}"></script>
+    
+</body>
+</html>

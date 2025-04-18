@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Your Resume</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            max-width: 600px;
+            margin: auto;
+        }
+        h2 {
+            text-align: center;
+        }
+        p.note {
+            font-size: 14px;
+            color: #555;
+            text-align: center;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        label {
+            font-weight: bold;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .download-btn {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            background-color: #28a745;
+            padding: 10px;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .download-btn:hover {
+            background-color: #218838;
+        }
+        .pdf-preview {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .pdf-preview iframe {
+            width: 100%;
+            height: 500px;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Create Your Resume</h2>
+<p class="note"><strong>Note:</strong> You can either upload a resume PDF or fill in some fields below.</p>
+<!-- * Show PDF Preview & Download Button if Resume Exists -->
+{% if resume and resume.pdf_file %}
+    <div class="pdf-preview">
+        <h3>Uploaded Resume Preview</h3>
+        <iframe src="{{ resume.pdf_file.url }}" frameborder="0"></iframe>
+        <a href="{{ resume.pdf_file.url }}" class="download-btn" target="_blank">Download Uploaded PDF</a>
+    </div>
+{% endif %}
+
+<!-- Always show the form -->
+<form id="resume-form" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save Resume</button>
+</form>
+
+
+
+
+
+<!-- * JavaScript Validation -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const form = document.getElementById("resume-form");
+
+    form.addEventListener("submit", function(event) {
+        let isValid = true;
+        let errorMessage = "";
+
+        // Get form values
+        const title = document.querySelector("[name='title']").value.trim();
+        const experience = document.querySelector("[name='experience']").value.trim();
+        const skills = document.querySelector("[name='skills']").value.trim();
+        const pdfFile = document.querySelector("[name='pdf_file']");
+
+        // * Allow form submission if a PDF is uploaded, even if fields are empty
+        const fieldsFilled = title || experience || skills;
+        const pdfUploaded = pdfFile && pdfFile.files.length > 0;
+
+        if (!fieldsFilled && !pdfUploaded) {
+            errorMessage += "Please either upload a resume PDF or fill at least one field.\n";
+            isValid = false;
+        }
+
+        // * Validate File Upload (Must be PDF, Max 5MB)
+        if (pdfUploaded) {
+            const file = pdfFile.files[0];
+            const fileSizeMB = file.size / (1024 * 1024);
+            const allowedExtensions = ['pdf'];
+
+            if (!allowedExtensions.includes(file.name.split('.').pop().toLowerCase())) {
+                errorMessage += "Only PDF files are allowed.\n";
+                isValid = false;
+            }
+            if (fileSizeMB > 5) {
+                errorMessage += "File size must be 5MB or less.\n";
+                isValid = false;
+            }
+        }
+
+        // Show error message if form is invalid
+        if (!isValid) {
+            alert(errorMessage);
+            event.preventDefault();
+        }
+    });
+});
+</script>
+
+</body>
+</html>
