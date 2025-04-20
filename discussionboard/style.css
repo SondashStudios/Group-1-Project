@@ -94,3 +94,26 @@ textarea {
 }
 
 
+.upvote-btn,
+.downvote-btn {
+    background-color: transparent;  /* Transparent background */
+    border: none;                   /* Remove border */
+    font-size: 16px;                /* Smaller font */
+    padding: 2px 6px;               /* Less padding = skinnier */
+    cursor: pointer;
+    color: #333;                    /* Arrow color */
+    transition: transform 0.2s ease;
+}
+
+.upvote-btn:hover,
+.downvote-btn:hover {
+    transform: scale(1.2);          /* Slight zoom on hover */
+    color: #007bff;                 /* Blue highlight on hover */
+}
+
+.vote-section {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+

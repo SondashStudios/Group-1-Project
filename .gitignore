@@ -1,1 +1,7 @@
 .qodo
+# .gitignore
+__pycache__/
+*.pyc
+
+# Virtual environment
+venv/

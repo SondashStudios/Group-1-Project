@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", () => {
     const urlParams = new URLSearchParams(window.location.search);
     const questionId = urlParams.get("id");
 
@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     loadReplies();
 
-    document.getElementById("replyForm").addEventListener("submit", function (e) {
+    document.getElementById("replyForm").addEventListener("submit", (e) => {
         e.preventDefault();
         postReply(questionId);
     });
@@ -49,13 +49,53 @@ function createReplyElement(reply, level = 0) {
     replyDiv.classList.add("reply");
     replyDiv.style.marginLeft = `${level * 20}px`;
 
+    const storageKey = `voted-${reply.id}`;
+    const voteKey = `vote-count-${reply.id}`;
+    let voteCount = parseInt(localStorage.getItem(voteKey)) || 0;
+
     replyDiv.innerHTML = `
         <div class="reply-header">
             <span class="reply-username">${reply.username}</span>
             <small class="reply-time">(${reply.created_at})</small>
         </div>
         <p class="reply-content">${reply.reply}</p>
+        <div class="vote-section">
+            <button class="upvote-btn" data-id="${reply.id}">↑</button>
+            <button class="downvote-btn" data-id="${reply.id}">↓</button>
+            <span class="vote-count" id="vote-count-${reply.id}">${voteCount}</span>
+        </div>
     `;
+
+    const upvoteBtn = replyDiv.querySelector(".upvote-btn");
+    const downvoteBtn = replyDiv.querySelector(".downvote-btn");
+    const voteCountSpan = replyDiv.querySelector(`#vote-count-${reply.id}`);
+
+    if (localStorage.getItem(storageKey)) {
+        upvoteBtn.disabled = true;
+        downvoteBtn.disabled = true;
+    }
+
+    upvoteBtn.addEventListener("click", () => {
+        if (!localStorage.getItem(storageKey)) {
+            voteCount++;
+            voteCountSpan.textContent = voteCount;
+            localStorage.setItem(storageKey, "up");
+            localStorage.setItem(voteKey, voteCount);
+            upvoteBtn.disabled = true;
+            downvoteBtn.disabled = true;
+        }
+    });
+
+    downvoteBtn.addEventListener("click", () => {
+        if (!localStorage.getItem(storageKey)) {
+            voteCount--;
+            voteCountSpan.textContent = voteCount;
+            localStorage.setItem(storageKey, "down");
+            localStorage.setItem(voteKey, voteCount);
+            upvoteBtn.disabled = true;
+            downvoteBtn.disabled = true;
+        }
+    });
 
     const replyButton = document.createElement("button");
     replyButton.textContent = "Reply";
