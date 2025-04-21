@@ -78,9 +78,9 @@ describe("loadReplies", () => {
     expect(parseInt(voteCount.textContent)).toBeGreaterThanOrEqual(1);
   });
 
-  test("shows 3 votes if already voted", async () => {
+  test("shows 1 vote if already voted", async () => {
     localStorage.setItem("voted-testuser-1", "up");
-    localStorage.setItem("vote-count-1", "3");
+    localStorage.setItem("vote-count-1", "1");
 
     global.fetch = jest.fn(() =>
       Promise.resolve({
@@ -91,7 +91,7 @@ describe("loadReplies", () => {
               username: "AlreadyVoted",
               reply: "Locked Vote",
               created_at: "2025-03-31",
-              votes: 3,
+              votes: 1,
               children: [],
             },
           ]),
@@ -102,6 +102,6 @@ describe("loadReplies", () => {
     await new Promise((r) => setTimeout(r, 100));
 
     const voteCount = document.querySelector(".vote-count");
-    expect(voteCount.textContent).toBe("3");
+    expect(voteCount.textContent).toBe("1");
   });
 });
