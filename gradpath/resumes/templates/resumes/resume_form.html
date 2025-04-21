@@ -68,13 +68,31 @@
             height: 500px;
             border: 1px solid #ddd;
         }
+        .go-home {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .go-home a {
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+        }
+        .go-home a:hover {
+            text-decoration: underline;
+        }
+        #resume-preview {
+            display: none;
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
 
 <h2>Create Your Resume</h2>
 <p class="note"><strong>Note:</strong> You can either upload a resume PDF or fill in some fields below.</p>
-<!-- * Show PDF Preview & Download Button if Resume Exists -->
+
 {% if resume and resume.pdf_file %}
     <div class="pdf-preview">
         <h3>Uploaded Resume Preview</h3>
@@ -83,18 +101,23 @@
     </div>
 {% endif %}
 
-<!-- Always show the form -->
 <form id="resume-form" method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Save Resume</button>
+    <button type="button" onclick="previewResume()">Preview</button>
+    <button type="submit" id="confirm-submit" style="display:none">Submit</button>
 </form>
 
+<div id="resume-preview">
+    <h3>Resume Preview</h3>
+    <div id="preview-content"></div>
+    <button onclick="confirmSubmit()">Confirm and Submit</button>
+</div>
 
+<div class="go-home">
+    <a href="{% url 'welcome' %}">← Go Back Home</a>
+</div>
 
-
-
-<!-- * JavaScript Validation -->
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     const form = document.getElementById("resume-form");
@@ -103,13 +126,11 @@ document.addEventListener("DOMContentLoaded", function() {
         let isValid = true;
         let errorMessage = "";
 
-        // Get form values
         const title = document.querySelector("[name='title']").value.trim();
         const experience = document.querySelector("[name='experience']").value.trim();
         const skills = document.querySelector("[name='skills']").value.trim();
         const pdfFile = document.querySelector("[name='pdf_file']");
 
-        // * Allow form submission if a PDF is uploaded, even if fields are empty
         const fieldsFilled = title || experience || skills;
         const pdfUploaded = pdfFile && pdfFile.files.length > 0;
 
@@ -118,7 +139,6 @@ document.addEventListener("DOMContentLoaded", function() {
             isValid = false;
         }
 
-        // * Validate File Upload (Must be PDF, Max 5MB)
         if (pdfUploaded) {
             const file = pdfFile.files[0];
             const fileSizeMB = file.size / (1024 * 1024);
@@ -134,13 +154,31 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         }
 
-        // Show error message if form is invalid
         if (!isValid) {
             alert(errorMessage);
             event.preventDefault();
         }
     });
 });
+
+function previewResume() {
+    const form = document.getElementById('resume-form');
+    const previewDiv = document.getElementById('resume-preview');
+    const output = document.getElementById('preview-content');
+
+    let data = new FormData(form);
+    output.innerHTML = '';
+    data.forEach((value, key) => {
+        if (key !== 'csrfmiddlewaretoken') {
+            output.innerHTML += `<p><strong>${key}:</strong> ${value}</p>`;
+        }
+    });
+    previewDiv.style.display = 'block';
+}
+
+function confirmSubmit() {
+    document.getElementById('confirm-submit').click();
+}
 </script>
 
 </body>

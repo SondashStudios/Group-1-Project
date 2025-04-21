@@ -35,7 +35,7 @@ class ResumeCreateView(LoginRequiredMixin, CreateView):
         try:
             context['resume'] = Resume.objects.filter(user=self.request.user).last()
         except Exception as e:
-            print("🔥 DEBUG: Error in get_context_data:", e)
+            print(" DEBUG: Error in get_context_data:", e)
             context['resume'] = None
         return context
 
@@ -44,14 +44,13 @@ class ResumeCreateView(LoginRequiredMixin, CreateView):
             form.instance.user = self.request.user
             resume = form.save()
             if resume.pdf_file:
-                print("✅ File saved to:", resume.pdf_file.path)
+                print(" File saved to:", resume.pdf_file.path)
             else:
-                print("⚠️ No PDF file attached.")
+                print(" No PDF file attached.")
             return redirect('resumes:generate_pdf', resume_id=resume.id)
         except Exception as e:
-            print("🔥 DEBUG: Error during resume save:", e)
+            print(" DEBUG: Error during resume save:", e)
             return HttpResponse("Something went wrong. Check server logs.", status=500)
-
 
 # Optional fallback handler
 @login_required
@@ -76,25 +75,54 @@ def generate_pdf(request, resume_id):
 
     skills_list = [skill.strip() for skill in resume.skills.split(",")] if resume.skills else []
 
-    resume_data = {
-        "name": resume.title,
-        "summary": resume.summary,
-        "skills": skills_list,
-        "education": resume.education,
-        "experience": resume.experience,
-        "certifications": resume.certifications,
-    }
-
-    template = get_template('resumes/resume_pdf_template.html')
-    html = template.render(resume_data)
-
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="resume_{resume_id}.pdf"'
 
-    pisa_status = pisa.CreatePDF(html, dest=response)
-    if pisa_status.err:
-        return HttpResponse('PDF generation failed', status=500)
+    from reportlab.pdfgen import canvas
+    from reportlab.lib.pagesizes import letter
 
+    p = canvas.Canvas(response, pagesize=letter)
+    width, height = letter
+
+    p.setFont("Helvetica-Bold", 16)
+    p.drawCentredString(width / 2.0, height - 50, "Professional Resume")
+
+    y = height - 100
+    p.setFont("Helvetica", 12)
+
+    if resume.title:
+        p.drawString(50, y, f"Title: {resume.title}")
+        y -= 25
+    if resume.experience:
+        p.drawString(50, y, "Experience:")
+        y -= 20
+        for line in resume.experience.splitlines():
+            p.drawString(70, y, f"- {line}")
+            y -= 15
+    if resume.skills:
+        p.drawString(50, y, "Skills:")
+        y -= 20
+        for skill in skills_list:
+            p.drawString(70, y, f"- {skill.strip()}")
+            y -= 15
+    if resume.education:
+        p.drawString(50, y, "Education:")
+        y -= 20
+        for line in resume.education.splitlines():
+            p.drawString(70, y, f"- {line}")
+            y -= 15
+    if resume.certifications:
+        p.drawString(50, y, "Certifications:")
+        y -= 20
+        for line in resume.certifications.splitlines():
+            p.drawString(70, y, f"- {line}")
+            y -= 15
+
+    if y < 100:
+        p.showPage()
+
+    p.showPage()
+    p.save()
     return response
 
 @login_required
