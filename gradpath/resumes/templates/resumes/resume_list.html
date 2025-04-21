@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Resumes</title>
+    <style>
+        body {
+            background: #f5f7fa;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .dashboard-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-radius: 8px;
+            margin-top: 40px;
+        }
+
+        h2 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            background: #ecf0f1;
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .resume-title {
+            font-weight: bold;
+            color: #34495e;
+        }
+
+        .actions a {
+            color: #3498db;
+            text-decoration: none;
+            margin-left: 10px;
+        }
+
+        .actions a:hover {
+            text-decoration: underline;
+        }
+
+        .top-bar {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+
+        .top-bar a {
+            text-decoration: none;
+            background: #3498db;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 4px;
+        }
+
+        .top-bar a:hover {
+            background: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="top-bar">
+            <a href="{% url 'resumes:resume_create' %}">+ Create New Resume</a>
+        </div>
+
+        <h2>My Resumes</h2>
+
+        <ul>
+            {% for resume in resumes %}
+                <li>
+                    <span class="resume-title">{{ resume.title }} – {{ resume.created_at|date:"Y-m-d H:i" }}</span>
+                    <span class="actions">
+                        <a href="{% url 'resumes:generate_pdf' resume.id %}">Download PDF</a>
+                        <a href="{% url 'resumes:resume_detail' resume.id %}">View</a>
+                        <a href="{% url 'resumes:resume_edit' resume.id %}">Edit</a>
+                        <a href="{% url 'resumes:delete_resume' resume.id %}">Delete</a>
+                    </span>
+                </li>
+            {% empty %}
+                <li>No resumes uploaded yet.</li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>

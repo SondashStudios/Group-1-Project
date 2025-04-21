@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="font-family: Arial, sans-serif;">
+    <div style="background-color: black; padding: 15px;">
+        <h1 style="color: white; margin: 0; text-align: center;">GradPath</h1>
+    </div>
+
+    <div style="margin: 20px;">
+        <a href="{% url 'signup' %}" style="background-color: blue; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Sign-Up</a>
+        <a href="{% url 'login' %}" style="background-color: blue; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Login</a>
+    </div>
+
+    <div style="text-align: center; margin-top: 50px;">
+        <h2>Sign Up for GradPath</h2>
+        <form method="post" style="display: inline-block; text-align: left;">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" style="background-color: blue; color: white; padding: 10px 20px; border: none;">Sign Up</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

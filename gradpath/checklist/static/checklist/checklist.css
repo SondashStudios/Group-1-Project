@@ -1,0 +1,174 @@
+/* Stylying for progress bar container */
+
+#progressBarContainer {
+    background-color: #ddd; /* Background color for the progress bar container */
+    height: 20px; /* Height of the progress bar container */
+    margin-bottom: 20px; /* Spacing below the progress bar container */
+}
+
+/* Styling for progress bar */
+#progressBar {
+    background-color: #007BFF; /* Color of the progress bar */
+    height: 100%; /* Height of the progress bar */
+    width: 0; /* Initial width of the progress bar */
+    transition: width 0.3s ease-in-out; /* Smooth transition effect for width */
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 100vh;
+}
+
+header {
+    background-color: #333;
+    color: #fff;
+    padding: 50px 20px;  /* Increased padding for top and bottom */
+    display: flex;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box; 
+    height: 70px;  
+}
+
+h1 {
+    margin: 0;  /* Reset margin */
+    flex-grow: 1; 
+}
+
+
+.subheader {
+    color: #333;
+    padding: 10px 0;
+    text-align: center;
+    font-size: 24px; 
+    font-weight: bold; 
+    margin-bottom: 20px; 
+}
+
+nav {
+    margin-left: 20px;  /* Margin for the links */
+}
+
+.header-link {
+    color: #fff;
+    text-decoration: none;
+    padding: 10px 15px;  /* Increased padding for the links */
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.header-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+
+footer {
+    background-color: #333;
+    color: #fff;
+    padding: 10px 0;
+    text-align: center;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.checklist {
+    border: 3px solid #007BFF;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 15px;
+    width: 80%;
+    max-width: 600px;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+}
+
+.toggle-button {
+    width: 20px;
+    height: 20px;
+    background-color: transparent;
+    border: none;
+    margin-right: 10px;
+    position: relative;
+    cursor: pointer;
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out; /* Smooth transition effect for opacity */
+}
+
+.toggle-button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid #000;
+    transition: transform 0.5s;
+}
+
+.toggle-button.expanded::before {
+    transform: translate(-50%, -50%) rotate(180deg);
+}
+
+.options {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out; /* Smooth transition effect for opacity and max-height */
+}
+
+.options.expanded {
+    max-height: 500px; /* Adjust to fit content */
+    opacity: 1;
+}
+
+.checklist-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.checklist-item label {
+    flex-grow: 1;
+    margin-right: 10px;
+}
+
+.checklist-item input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+}
+
+/* Save progress button styling */
+.save-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 20px;
+    margin-bottom: 40px;
+}
+
+.save-button:hover {
+    background-color: #45a049;
+}
+
