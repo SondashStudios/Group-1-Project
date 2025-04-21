@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div style="text-align: center; padding: 40px;">
+    <h2>🎉 Your resume was submitted successfully!</h2>
+    <p>
+      <a href="{% url 'resumes:resume_list' %}" class="btn btn-primary">View All Resumes</a>
+      or
+      <a href="{% url 'welcome' %}" class="btn btn-secondary">Return Home</a>
+    </p>
+  </div>
+{% endblock %}

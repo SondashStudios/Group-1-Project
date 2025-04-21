@@ -9,6 +9,11 @@ from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 
 from xhtml2pdf import pisa
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.units import inch
+from reportlab.lib.colors import green, white
+
 from .models import Resume
 from .forms import ResumeForm
 from .serializers import ResumeSerializer
@@ -47,7 +52,7 @@ class ResumeCreateView(LoginRequiredMixin, CreateView):
                 print(" File saved to:", resume.pdf_file.path)
             else:
                 print(" No PDF file attached.")
-            return redirect('resumes:generate_pdf', resume_id=resume.id)
+            return redirect('resumes:resume_success', resume_id=resume.id)
         except Exception as e:
             print(" DEBUG: Error during resume save:", e)
             return HttpResponse("Something went wrong. Check server logs.", status=500)
@@ -78,16 +83,21 @@ def generate_pdf(request, resume_id):
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="resume_{resume_id}.pdf"'
 
-    from reportlab.pdfgen import canvas
-    from reportlab.lib.pagesizes import letter
-
     p = canvas.Canvas(response, pagesize=letter)
     width, height = letter
 
-    p.setFont("Helvetica-Bold", 16)
-    p.drawCentredString(width / 2.0, height - 50, "Professional Resume")
+    # UNCC header
+    p.setFillColor(green)
+    p.rect(0, height - 50, width, 50, fill=1)
+    p.setFont("Helvetica-Bold", 24)
+    p.setFillColor(white)
+    p.drawCentredString(width / 2.0, height - 40, "UNCC")
 
     y = height - 100
+    p.setFont("Helvetica-Bold", 16)
+    p.setFillColor("black")
+    p.drawString(50, y, "Professional Resume")
+    y -= 30
     p.setFont("Helvetica", 12)
 
     if resume.title:
@@ -124,6 +134,10 @@ def generate_pdf(request, resume_id):
     p.showPage()
     p.save()
     return response
+
+@login_required
+def resume_success(request, resume_id):
+    return render(request, 'resumes/success.html', {'resume_id': resume_id})
 
 @login_required
 def delete_resume(request, resume_id):
