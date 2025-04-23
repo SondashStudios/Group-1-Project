@@ -56,27 +56,23 @@ Visit: `http://127.0.0.1:8000/`
 ---
 
 ##  Discussion Board
-| Feature | Path |
-|---------|------|
-| View Posts | `/discussion/` |
-| New Post | `/discussion/new/` |
-| View Post | `/discussion/<post_id>/` |
-| Like Post | `/discussion/<post_id>/like/` |
-| Vote Comment | `/discussion/comment/<comment_id>/vote/` |
-
----
-
-##  REST APIs
-| API | Path |
-|-----|------|
-| Posts | `/discussion/api/posts/` |
-| Comments | `/discussion/api/comments/` |
+| Feature            | Path                                 |
+|--------------------|--------------------------------------|
+| View All Questions | `/discussionboard/index.html`        |
+| View Thread        | `/discussionboard/discussion.html?id=<question_id>` |
+| Post Reply         | Handled via frontend JS + PHP        |
+| Upvote/Downvote    | LocalStorage-based (client-side)     |
 
 ---
 
 ##  Run Tests
 ```bash
-python manage.py test
+python manage.py test accounts
+python manage.py test resumes
+cd Group-1-Project-main/Group-1-Project-main/discussionboard_tests
+npm install
+npx jest (provides test results of discussionboard and checklist)
+
 ```
 
 ---
