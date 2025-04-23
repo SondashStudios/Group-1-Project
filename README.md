@@ -67,6 +67,7 @@ Visit: `http://127.0.0.1:8000/`
 
 ##  Run Tests
 ```bash
+cd Group-1-Project/Group-1-Project/gradpath
 python manage.py test accounts
 python manage.py test resumes
 cd Group-1-Project-main/Group-1-Project-main/discussionboard_tests
