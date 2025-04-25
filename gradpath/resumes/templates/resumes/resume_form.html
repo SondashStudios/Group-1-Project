@@ -93,14 +93,6 @@
 <h2>Create Your Resume</h2>
 <p class="note"><strong>Note:</strong> You can either upload a resume PDF or fill in some fields below.</p>
 
-{% if resume and resume.pdf_file %}
-    <div class="pdf-preview">
-        <h3>Uploaded Resume Preview</h3>
-        <iframe src="{{ resume.pdf_file.url }}" frameborder="0"></iframe>
-        <a href="{{ resume.pdf_file.url }}" class="download-btn" target="_blank">Download Uploaded PDF</a>
-    </div>
-{% endif %}
-
 <form id="resume-form" method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
