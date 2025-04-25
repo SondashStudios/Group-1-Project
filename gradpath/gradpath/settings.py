@@ -151,3 +151,7 @@ CSRF_COOKIE_SAMESITE = 'Lax'
 CSRF_COOKIE_NAME = 'csrftoken'
 CSRF_COOKIE_HTTPONLY = False
 CSRF_COOKIE_AGE = 3600
+
+# Media files (uploaded resumes)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'

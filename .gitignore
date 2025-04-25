@@ -5,3 +5,6 @@ __pycache__/
 
 # Virtual environment
 venv/
+
+# Uploaded media files (resumes)
+media/

@@ -54,7 +54,8 @@ class ResumeCreateView(LoginRequiredMixin, CreateView):
                 print(" No PDF file attached.")
             return redirect('resumes:resume_success', resume_id=resume.id)
         except Exception as e:
-            print(" DEBUG: Error during resume save:", e)
+            import traceback
+            print(" DEBUG: Error during resume save:", traceback.format_exc())
             return HttpResponse("Something went wrong. Check server logs.", status=500)
 
 # Optional fallback handler

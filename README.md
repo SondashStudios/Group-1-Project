@@ -1,4 +1,6 @@
 ## GradPath Command Reference
+## Overview
+GradPath is a career preparation web application designed to help students build resumes, track learning, and engage in discussions.
 
 This document includes every necessary command to setup, run, and test the Group 1 Project.
 
@@ -75,6 +77,9 @@ npm install
 npx jest (provides test results of discussionboard and checklist)
 
 ```
+## views resumes
+
+go to URL: 'http://127.0.0.1:8000/api/v1/resumes/' to veiw submitted resumes. 
 
 ---
 
