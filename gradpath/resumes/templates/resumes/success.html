@@ -1,11 +1,44 @@
 {% extends 'base.html' %}
+
 {% block content %}
-  <div style="text-align: center; padding: 40px;">
-    <h2>🎉 Your resume was submitted successfully!</h2>
-    <p>
-      <a href="{% url 'resumes:resume_list' %}" class="btn btn-primary">View All Resumes</a>
-      or
-      <a href="{% url 'welcome' %}" class="btn btn-secondary">Return Home</a>
-    </p>
-  </div>
+<div style="text-align: center; padding: 40px;">
+    <h2>🎉 Your Resume Was Submitted Successfully!</h2>
+    <p>Your resume has been saved. You can manage your resumes below.</p>
+
+    <div class="btn-group">
+        <a href="{% url 'resumes:resume_list' %}" class="btn">View My Resumes</a>
+        <a href="{% url 'resumes:resume_create' %}" class="btn">Create Another Resume</a>
+        <a href="{% url 'welcome' %}" class="btn btn-secondary">Return Home</a>
+    </div>
+</div>
+
+<style>
+.btn-group {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.btn {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+</style>
 {% endblock %}
