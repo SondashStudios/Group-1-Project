@@ -6,7 +6,7 @@ This document includes every necessary command to setup, run, and test the Group
 
 ---
 
-##  Setup
+##  Setup (Example Given Below)
 ```bash
 cd Group-1-Project/Group-1-Project-main/gradpath
 pip install -r requirements.txt
@@ -67,7 +67,7 @@ Visit: `http://127.0.0.1:8000/`
 
 ---
 
-##  Run Tests
+##  Run Tests (Example Given Below)
 ```bash
 cd Group-1-Project/Group-1-Project-main/gradpath
 python manage.py test accounts
