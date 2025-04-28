@@ -8,14 +8,14 @@ This document includes every necessary command to setup, run, and test the Group
 
 ##  Setup
 ```bash
-cd Group-1-Project/Group-1-Project/gradpath
+cd Group-1-Project/Group-1-Project-main/gradpath
 pip install -r requirements.txt
 python manage.py makemigrations
 python manage.py migrate
 python manage.py createsuperuser
 
 In another terminal:
-cd Group-1-Project/Group-1-Project/discussionboard
+cd Group-1-Project/Group-1-Project-main/discussionboard
 php -S localhost:8000 (ensure php is installed for your specific OS)
 ```
 
@@ -69,7 +69,7 @@ Visit: `http://127.0.0.1:8000/`
 
 ##  Run Tests
 ```bash
-cd Group-1-Project/Group-1-Project/gradpath
+cd Group-1-Project/Group-1-Project-main/gradpath
 python manage.py test accounts
 python manage.py test resumes
 cd Group-1-Project-main/Group-1-Project-main/discussionboard_tests
