@@ -1,0 +1,10 @@
+.qodo
+# .gitignore
+__pycache__/
+*.pyc
+
+# Virtual environment
+venv/
+
+# Uploaded media files (resumes)
+media/

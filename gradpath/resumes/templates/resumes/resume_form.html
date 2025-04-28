@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Your Resume</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            max-width: 600px;
+            margin: auto;
+        }
+        h2 {
+            text-align: center;
+        }
+        p.note {
+            font-size: 14px;
+            color: #555;
+            text-align: center;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        label {
+            font-weight: bold;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .go-home {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .go-home a {
+            text-decoration: none;
+            color: #28a745;
+            font-weight: bold;
+        }
+        .go-home a:hover {
+            text-decoration: underline;
+        }
+        #resume-preview {
+            display: none;
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Create or Update Your Resume</h2>
+<p class="note"><strong>Note:</strong> You can upload a resume PDF or fill in some fields below.</p>
+
+<form id="resume-form" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="button" onclick="previewResume()">Preview</button>
+    <button type="submit" id="confirm-submit" style="display:none">Submit</button>
+</form>
+
+<div id="resume-preview">
+    <h3>Resume Preview</h3>
+    <div id="preview-content"></div>
+    <button onclick="confirmSubmit()">Confirm and Submit</button>
+</div>
+
+<div class="go-home">
+    <a href="{% url 'welcome' %}">← Go Back Home</a>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const form = document.getElementById("resume-form");
+
+    form.addEventListener("submit", function(event) {
+        let isValid = true;
+        let errorMessage = "";
+
+        const title = document.querySelector("[name='title']").value.trim();
+        const experience = document.querySelector("[name='experience']").value.trim();
+        const skills = document.querySelector("[name='skills']").value.trim();
+        const pdfFile = document.querySelector("[name='pdf_file']");
+
+        const fieldsFilled = title || experience || skills;
+        const pdfUploaded = pdfFile && pdfFile.files.length > 0;
+
+        if (!fieldsFilled && !pdfUploaded) {
+            errorMessage += "Please either upload a resume PDF or fill at least one field.\n";
+            isValid = false;
+        }
+
+        if (pdfUploaded) {
+            const file = pdfFile.files[0];
+            const fileSizeMB = file.size / (1024 * 1024);
+            const allowedExtensions = ['pdf'];
+
+            if (!allowedExtensions.includes(file.name.split('.').pop().toLowerCase())) {
+                errorMessage += "Only PDF files are allowed.\n";
+                isValid = false;
+            }
+            if (fileSizeMB > 5) {
+                errorMessage += "File size must be 5MB or less.\n";
+                isValid = false;
+            }
+        }
+
+        if (!isValid) {
+            alert(errorMessage);
+            event.preventDefault();
+        }
+    });
+});
+
+function previewResume() {
+    const form = document.getElementById('resume-form');
+    const previewDiv = document.getElementById('resume-preview');
+    const output = document.getElementById('preview-content');
+
+    let data = new FormData(form);
+    output.innerHTML = '';
+    data.forEach((value, key) => {
+        if (key !== 'csrfmiddlewaretoken') {
+            output.innerHTML += `<p><strong>${key}:</strong> ${value}</p>`;
+        }
+    });
+    previewDiv.style.display = 'block';
+}
+
+function confirmSubmit() {
+    document.getElementById('confirm-submit').click();
+}
+</script>
+
+</body>
+</html>

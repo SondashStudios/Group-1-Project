@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Resume Upload</title>
+    <style>
+        .container {
+            width: 60%;
+            margin: 0 auto;
+            font-family: Arial, sans-serif;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        textarea, input[type="file"] {
+            width: 100%;
+            padding: 10px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .save-btn {
+            background-color: #007bff;
+            color: white;
+            margin-bottom: 20px;
+        }
+        .download-btn {
+            background-color: #28a745;
+            color: white;
+        }
+        .preview {
+            width: 100%;
+            height: 500px;
+            background-color: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        embed {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="input-group">
+            <label for="certifications"><strong>Certifications:</strong></label>
+            <textarea id="certifications" placeholder="Enter Certifications (Optional)"></textarea>
+        </div>
+
+        <div class="input-group">
+            <label for="pdfFile"><strong>PDF file:</strong></label>
+            <input type="file" id="pdfFile" accept="application/pdf" onchange="previewPDF(event)">
+        </div>
+
+        <button class="save-btn" onclick="saveResume()">Save Resume</button>
+
+        <h3>Uploaded Resume Preview</h3>
+        <div class="preview" id="previewContainer">
+            <p>No PDF uploaded.</p>
+        </div>
+
+        <a id="downloadLink" style="display:none;" download="resume.pdf">
+            <button class="download-btn">Download Uploaded PDF</button>
+        </a>
+    </div>
+
+    <script>
+        function previewPDF(event) {
+            const file = event.target.files[0];
+            if (file && file.type === "application/pdf") {
+                const url = URL.createObjectURL(file);
+                const previewContainer = document.getElementById("previewContainer");
+                previewContainer.innerHTML = `<embed src="${url}" type="application/pdf">`;
+
+                const downloadLink = document.getElementById("downloadLink");
+                downloadLink.href = url;
+                downloadLink.style.display = "block";
+            } else {
+                alert("Please upload a valid PDF file.");
+            }
+        }
+
+        function saveResume() {
+            alert("Resume saved! (Implement backend upload logic here)");
+        }
+    </script>
+</body>
+</html>
